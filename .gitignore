@@ -1,4 +1,5 @@
 # Custom
+synthetic-tanh/
 repos/
 data/MNIST/
 # save/**/activations_epochs_*.npz

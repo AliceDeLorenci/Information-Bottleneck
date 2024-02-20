@@ -57,7 +57,7 @@ def loadMNISTData(root):
 
     return data, targets
 
-def buildDatasets(data, targets, ratio=0.8, seed=0, name=None):
+def buildDatasets(data, targets, ratio=0.8, seed=None, name=None):
     """
     Build training and test datasets from the given data and targets.
 
@@ -70,7 +70,8 @@ def buildDatasets(data, targets, ratio=0.8, seed=0, name=None):
     Returns:
         dataset: dict, dictionary containing training and test datasets, as well as the full dataset and the number of features.
     """
-    torch.manual_seed(seed)
+    if seed is not None:
+        torch.manual_seed(seed)
 
     n = len( data )
     n_train = int( n * ratio )

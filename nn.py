@@ -68,7 +68,7 @@ def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
 
     Args:
         model: torch.nn.Module, model to train.
-        setup: dict, dictionary containing the loss function
+        setup: dict, setup dictionary containing the loss function
         train_loader: torch.utils.data.DataLoader, data loader for the training set.
         optimizer: torch.optim, optimization algorithm.
         device: torch.device, device to use for the computation.
@@ -125,7 +125,7 @@ def test(model, setup, test_loader, device):
     correct /= len(test_loader.dataset)
     print( '-- test loss: {:.4f} -- test acc: {:.4f}\n'.format(test_loss, correct) )
 
-def save_activations(model, dataset, epoch, folder, device, path="./save/"):
+def save_activations(model, dataset, epoch, device, path="./save/"):
     """
     Save the activations of the model for the given dataset.
 
@@ -133,7 +133,6 @@ def save_activations(model, dataset, epoch, folder, device, path="./save/"):
         model: torch.nn.Module, model to evaluate.
         dataset: dataset.CustomDataset, dataset to evaluate the model on.
         epoch: int, current epoch number.
-        folder: str, subdirectory name to save the activations.
         device: torch.device, device to use for the computation.
         path: str, path to the directory where the data is saved.
     """
@@ -145,58 +144,4 @@ def save_activations(model, dataset, epoch, folder, device, path="./save/"):
 
         layer_activations = [ activation.detach().cpu().numpy() for activation in layer_activations ]
 
-        np.savez(path+folder+"/activations_epoch_"+str(epoch), *layer_activations)
-
-
-def save_setup(dataset, setup, path="./save/"):
-    """
-    Save the setup to a json file.
-
-    Args:
-        dataset: dict, dictionary containing the dataset name.
-        setup: dict, dictionary containing the setup parameters.
-        path: str, path to the directory where the data is saved.
-    
-    Returns:
-        folder: str, subdirectory name where the setup was saved.
-    """
-
-    # Subdirectory naming convention: dataset name and timestamp (to avoid overwritting previous results)
-    timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    folder = "{}-{}".format(dataset["name"], timestamp)
-
-    os.mkdir(path+folder)
-
-    # Save setup to json
-    def default( o ):
-        """
-        Default function for json.dump to handle non-serializable objects. 
-        Specifically we wish to handle entries that are lambda functions. We will save the source code of the function instead.
-        """
-        # inspect.getsource( value )
-        f_str = '='.join( inspect.getsource( o ).split('=')[1:] )[1:]
-        return f_str
-
-    with open( path+folder+"/setup.json", "w" ) as outfile: 
-        json.dump(setup, outfile, default=default, indent=0)
-
-    return folder
-    
-def load_setup(folder, path="./save/"):
-    """
-    Load the setup from a json file and convert lambda source code to lambda function.
-
-    Args:
-        folder: str, subdirectory name where the setup was saved.
-        path: str, path to the directory where the data is saved.
-    
-    Returns:
-        loaded_results: dict, dictionary containing the setup parameters and functions.
-    """
-    
-    with open( path+folder+"/setup.json", "r" ) as infile: 
-        loaded_results = json.load(infile)
-    for key in ["hidden_activation_f", "output_activation_f", "optimizer", "loss_function", "evaluate_correct"]:
-        loaded_results[key] = eval( loaded_results[key] )
-    
-    return loaded_results
+        np.savez_compressed(path+"activations_epoch_"+str(epoch), *layer_activations)

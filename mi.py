@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import os
@@ -32,7 +33,7 @@ def get_distribution(x): # compute array's row distribution
 
 def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1]):
     """
-    Compute mutual information (MI) between neural network inputs and layer activations and between layer activations and targets.
+    Compute mutual information (MI) between neural network inputs and layer activations, I(X,T), and between layer activations and targets, I(T, Y).
 
     Args:
         x : inputs
@@ -125,10 +126,13 @@ def plot_info_plan(mi_xt, mi_yt, epochs):
 
     plt.figure()
     
-    for e in range(n_saved_epochs):
-        plt.plot(mi_xt[e, :], mi_yt[e, :], c='k', linewidth=0.5, alpha=0.5)
     for l in range(n_layers):
         scatter = plt.scatter(mi_xt[:, l], mi_yt[:, l], c=epochs, cmap='gnuplot', s=20, zorder=3)
+    cmap = mpl.cm.get_cmap('gnuplot', n_saved_epochs)
+    color = cmap(epochs)
+
+    for e in range(n_saved_epochs):
+        plt.plot(mi_xt[e, :], mi_yt[e, :], c=color[e], linewidth=0.5, alpha=0.5)
 
     cb = plt.colorbar(scatter, ticks=[epochs[0], epochs[-1]])
     cb.ax.set_title('Epochs', fontsize=10)
