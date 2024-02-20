@@ -102,7 +102,7 @@ def compute_mi(dataset, path, interval=100):
     
     return mi_xt_epochs, mi_ty_epochs, epochs
 
-def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None):
+def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None, max_epoch=None):
     """
     Plot the given mutual information values for each layer and each epoch in the information plane.
 
@@ -121,6 +121,12 @@ def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None):
     mi_yt = mi_yt[sorted_idx]
     epochs = epochs[sorted_idx]
 
+    if max_epoch is not None:
+        idx = np.where(epochs <= max_epoch)
+        mi_xt = mi_xt[idx]
+        mi_yt = mi_yt[idx]
+        epochs = epochs[idx]
+
     n_saved_epochs = mi_xt.shape[0]
     n_layers = mi_xt.shape[1]
 
@@ -137,6 +143,9 @@ def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None):
     cb = plt.colorbar(scatter, ticks=[epochs[0], epochs[-1]])
     cb.ax.set_title('Epochs', fontsize=10)
     cb.set_ticks([epochs[0], epochs[-1]]+ticks)
+
+    plt.xlabel('I(X;T)')
+    plt.ylabel('I(T;Y)')
 
     if markup is not None:
         plt.scatter(mi_xt[markup, :], mi_yt[markup, :], c='green', s=30, zorder=3)
