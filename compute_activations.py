@@ -86,6 +86,6 @@ if __name__ == "__main__":
 
     for epoch in range(1, setup["n_epochs"] + 1):
             train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose)
-            test(model, setup, loader["test"], device)
+            test(model, setup, loader["test"], device, verbose=verbose)
             if save and epoch%save_interval == 0:
                     save_activations(model, dataset["full"], epoch, device, path=path)

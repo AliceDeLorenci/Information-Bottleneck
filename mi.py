@@ -67,9 +67,9 @@ def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1]):
 
     return mi_xt, mi_ty
 
-def compute_mi(dataset, folder, interval=100, path="./save/"):
+def compute_mi(dataset, path, interval=100):
     activation_file_name = []
-    for file in os.listdir(path+folder):
+    for file in os.listdir(path):
         if file.startswith("activations_epoch_"):
             activation_file_name.append(file)
 
@@ -88,7 +88,7 @@ def compute_mi(dataset, folder, interval=100, path="./save/"):
         if epoch % interval != 0:
             continue
 
-        activations = np.load(path+folder+"/"+file)
+        activations = np.load(path+file)
         mi_xt_layers = []
         mi_ty_layers = []
         for key in activations:
@@ -102,7 +102,7 @@ def compute_mi(dataset, folder, interval=100, path="./save/"):
     
     return mi_xt_epochs, mi_ty_epochs, epochs
 
-def plot_info_plan(mi_xt, mi_yt, epochs):
+def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None):
     """
     Plot the given mutual information values for each layer and each epoch in the information plane.
 
@@ -127,13 +127,18 @@ def plot_info_plan(mi_xt, mi_yt, epochs):
     plt.figure()
     
     for l in range(n_layers):
-        scatter = plt.scatter(mi_xt[:, l], mi_yt[:, l], c=epochs, cmap='gnuplot', s=20, zorder=3)
+        scatter = plt.scatter(mi_xt[:, l], mi_yt[:, l], c=epochs, cmap='gnuplot', s=30, zorder=3)
     cmap = mpl.cm.get_cmap('gnuplot', n_saved_epochs)
     color = cmap(epochs)
 
     for e in range(n_saved_epochs):
-        plt.plot(mi_xt[e, :], mi_yt[e, :], c=color[e], linewidth=0.5, alpha=0.5)
+        plt.plot(mi_xt[e, :], mi_yt[e, :], c=color[e], linewidth=0.5, alpha=0.2)
 
     cb = plt.colorbar(scatter, ticks=[epochs[0], epochs[-1]])
     cb.ax.set_title('Epochs', fontsize=10)
-    plt.show()
+    cb.set_ticks([epochs[0], epochs[-1]]+ticks)
+
+    if markup is not None:
+        plt.scatter(mi_xt[markup, :], mi_yt[markup, :], c='green', s=30, zorder=3)
+        plt.plot(mi_xt[markup, :], mi_yt[markup, :], color='green', linewidth=0.5)
+    # plt.show()

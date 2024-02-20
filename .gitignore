@@ -1,10 +1,4 @@
 # Custom
-synthetic-tanh/
-repos/
-data/MNIST/
-# save/**/activations_epochs_*.npz
-# save/**/*.npz
-save/**/activations_epoch_*
 .DS_Store
 
 # Byte-compiled / optimized / DLL files

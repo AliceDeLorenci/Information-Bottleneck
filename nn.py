@@ -97,7 +97,9 @@ def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
     if verbose==1:
         print('Epoch {}: train loss {:.4f} '.format(epoch, loss.item()), end='')
 
-def test(model, setup, test_loader, device):
+    return loss.item()
+
+def test(model, setup, test_loader, device, verbose=1):
     """
     Evaluate the model on test set.
 
@@ -123,7 +125,11 @@ def test(model, setup, test_loader, device):
 
     test_loss /= len(test_loader.dataset)
     correct /= len(test_loader.dataset)
-    print( '-- test loss: {:.4f} -- test acc: {:.4f}\n'.format(test_loss, correct) )
+
+    if verbose:
+        print( '-- test loss: {:.4f} -- test acc: {:.4f}\n'.format(test_loss.item(), correct.item()) )
+    
+    return test_loss.item(), correct.item()
 
 def save_activations(model, dataset, epoch, device, path="./save/"):
     """
