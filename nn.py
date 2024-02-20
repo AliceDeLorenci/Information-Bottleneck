@@ -127,7 +127,9 @@ def test(model, setup, test_loader, device, verbose=1):
     correct /= len(test_loader.dataset)
 
     if verbose:
-        print( '-- test loss: {:.4f} -- test acc: {:.4f}\n'.format(test_loss.item(), correct.item()) )
+        print( '-- test loss: {:.4f} -- test acc: {:.4f}'.format(test_loss.item(), correct.item()) )
+    # elif verbose == 1:
+    #     print( '-- test loss: {:.4f} -- test acc: {:.4f}'.format(test_loss.item(), correct.item()), end='\r' )
     
     return test_loss.item(), correct.item()
 
