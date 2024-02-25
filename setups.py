@@ -24,8 +24,10 @@ def setup_lookup(idx):
         # network parameters
         setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
         setup["output_dim"] = 1                                         
-        setup["hidden_activation_f"] = lambda input: F.tanh(input)      
+        setup["hidden_activation_f"] = lambda input: F.tanh(input)
+        setup["hidden_activation"] = "tanh"      
         setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+        setup["output_activation"] = "sigmoid"
 
         # optimizer
         setup["lr"] = 0.01                             
@@ -51,7 +53,9 @@ def setup_lookup(idx):
         setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
         setup["output_dim"] = 1                                         
         setup["hidden_activation_f"] = lambda input: F.relu(input)     
+        setup["hidden_activation"] = "relu"
         setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+        setup["output_activation"] = "sigmoid"
 
         # optimizer
         setup["lr"] = 0.01                             
@@ -76,8 +80,10 @@ def setup_lookup(idx):
         # network parameters
         setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
         setup["output_dim"] = 1                                         
-        setup["hidden_activation_f"] = lambda input: F.tanh(input)      
-        setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+        setup["hidden_activation_f"] = lambda input: F.tanh(input)    
+        setup["hidden_activation"] = "tanh" 
+        setup["output_activation_f"] = lambda input: F.sigmoid(input)
+        setup["output_activation"] = "sigmoid"   
 
         # optimizer
         setup["lr"] = 0.01                             
@@ -103,8 +109,10 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)      
-            setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+            setup["hidden_activation_f"] = lambda input: F.tanh(input)   
+            setup["hidden_activation"] = "tanh"   
+            setup["output_activation_f"] = lambda input: F.sigmoid(input) 
+            setup["output_activation"] = "sigmoid"  
 
             # optimizer
             setup["lr"] = 0.01                             
@@ -131,7 +139,9 @@ def setup_lookup(idx):
         setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
         setup["output_dim"] = 2                                       
         setup["hidden_activation_f"] = lambda input: F.tanh(input)      
+        setup["hidden_activation"] = "tanh"
         setup["output_activation_f"] = lambda input: F.log_softmax(input, dim=1)   
+        setup["output_activation"] = "log_softmax"
 
         # optimizer
         setup["lr"] = 0.0004   
@@ -156,7 +166,9 @@ def setup_lookup(idx):
         setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
         setup["output_dim"] = 1                                         
         setup["hidden_activation_f"] = lambda input: F.tanh(input)      
+        setup["hidden_activation"] = "tanh"
         setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+        setup["output_activation"] = "sigmoid"
 
         # optimizer
         setup["lr"] = 0.01                             
@@ -181,8 +193,10 @@ def setup_lookup(idx):
         # network parameters
         setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
         setup["output_dim"] = 1                                         
-        setup["hidden_activation_f"] = lambda input: F.tanh(input)      
+        setup["hidden_activation_f"] = lambda input: F.tanh(input)     
+        setup["hidden_activation"] = "tanh" 
         setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+        setup["output_activation"] = "sigmoid"
 
         # optimizer
         setup["lr"] = 1e-2                             

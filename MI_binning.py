@@ -34,7 +34,12 @@ if __name__ == "__main__":
     elif setup["dataset"] == "synthetic":
         dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic" )
 
-    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], path, interval=1, bin_size=bin_size)
+    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
+                                                    path, 
+                                                    hidden_activation=setup["hidden_activation"], 
+                                                    output_activation=setup["output_activation"],
+                                                    interval=1, 
+                                                    bin_size=bin_size)
     np.savez_compressed( path+"mi-{}".format(bin_size), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
 
     plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)

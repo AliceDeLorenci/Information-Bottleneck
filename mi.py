@@ -52,7 +52,7 @@ def get_distribution(x): # compute array's row distribution
     _, inverse_indices, count = np.unique(x, axis=0, return_inverse=True, return_counts=True)
     return count / np.sum(count), inverse_indices
 
-def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1], bin_size=None):
+def mi_xt_ty(x, y, t, p_y, activation="tanh", bin_size=0.05):
     """
     Compute mutual information (MI) between neural network inputs and layer activations, I(X,T), and between layer activations and targets, I(T, Y).
 
@@ -61,18 +61,19 @@ def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1], bin_size=None):
         y : targets
         t : activations
         p_y : distribution of the targets
-        n_bins : number of bins used to discretize activations, default is 30
-        bounds : bounds for the activation values, default is [-1,1]
-        bin_size : size of the bins used to discretize activations, used instead of n_bins and bounds if not None
+        activation : activation function used in the layer, default is "tanh", necessary to determine the lower bound for the activation values
+        bin_size : size of the bins used to discretize activations
     """
 
-    # discretize activations
-    if bin_size is None:
-        assert n_bins > 0, "n_bins must be a positive integer"
-        assert len(bounds) == 2, "bounds must be a list with two elements"
-        bin_size = (bounds[1] - bounds[0]) / n_bins
+    if activation == "tanh":
+        lb = -1
+    elif activation == "relu" or activation == "sigmoid":
+        lb = 0
+    else:
+        lb = np.min(t)
+        print("Activation function not supported, defaulting to zero lower bound")
 
-    t_binned = (t - bounds[0]) // bin_size          # determine to which bin each activation value belongs to and substitute for binned value
+    t_binned = (t - lb) // bin_size          # determine to which bin each activation value belongs to and substitute for binned value
 
     p_t, inverse_indices_t = get_distribution( t_binned )    # binned activation's distribution
     
@@ -93,7 +94,7 @@ def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1], bin_size=None):
 
     return mi_xt, mi_ty
 
-def compute_mi(dataset, path, interval=100, bin_size=None):
+def compute_mi(dataset, path, interval=100, hidden_activation="tanh", output_activation="sigmoid", bin_size=None):
     """
     Load all activation data from folder and compute the mutual information.
     The files in the folder should be named "activations_epoch_*.<npy/npz>",
@@ -135,7 +136,11 @@ def compute_mi(dataset, path, interval=100, bin_size=None):
         mi_xt_layers = []
         mi_ty_layers = []
         for key in activations:
-            mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, activations[key], p_y, bin_size=bin_size)
+            if key == list(activations.keys())[-1]:
+                activation_type = output_activation
+            else:
+                activation_type = hidden_activation
+            mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, activations[key], p_y, activation=activation_type, bin_size=bin_size)
             mi_xt_layers.append( mi_xt )
             mi_ty_layers.append( mi_ty )
 

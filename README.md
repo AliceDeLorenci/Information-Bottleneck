@@ -122,7 +122,7 @@ Run experiments:
     - [ok] relu 
         - Motivation: very restricted test setting in the paper, testing more popular activation
         - setup 2
-    - [] what is the impact o regularization: weight decay (setup 3 and 4)
+    - [ok] what is the impact o regularization: weight decay (setup 3 and 4)
         - Motivation: compression phase is hypothetised to relate to generalization, it is well known regularization propotes regularization, therefore the hypothesis is that we will observe more significant compression
         - setup 3 (0.0001)
         - setup 4 (0.001)
@@ -156,6 +156,17 @@ Contribution: stochastic NN framework
 - I(X, T) reflects DNN true operating conditions
 
 Contribution: MI estimator
+
+### Estimating Mutual Information
+
+[Papers with code](https://physics.paperswithcode.com/paper/estimating-mutual-information)
+
+[Nice GitHub](https://github.com/paulbrodersen/entropy_estimators)
+
+[Questionable GitHub](https://github.com/lusinlu/fast-kraskov-mutual-information-estimation)
+
+In contrast to conventional MI estimators based on binning, their approach is based on entropy estimates from k-nearest neighbour distances.
+
 
 ## References
 
