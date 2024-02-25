@@ -1,43 +1,32 @@
+# python3 IB.py <setup_idx>
+
 import sys
 import os
 import datetime
 from pathlib import Path
 
+import numpy as np
+import matplotlib.pyplot as plt
 import torch
 
-from dataset import *
-from mi import *   
-from nn import *
-from setups import *
-from utils import *
+from dataset import buildDatasets, buildDataLoader, loadMNISTData, loadSyntheticData
+from mi import compute_mi, plot_info_plan
+from nn import Network, train, test, save_activations
+from setups import setup_lookup
+from utils import save_setup, load_setup
 
-# Usage: python3 compute_activations.py <setup_idx> <verbose> <folder> 
-# <setup_idx> : int, index of the setup to use, retrieved by setups.py
-# <verbose> : int, verbosity level (default: 0)
-# <folder> : str, folder in which to save the activations (default: setup-<setup_idx>)
-
-# if main
 if __name__ == "__main__":
-    
-    # Command line arguments
-    setup_idx = int( sys.argv[1] )
 
-    if len(sys.argv) > 2:
-        verbose = int( sys.argv[2] )
-    else:
-        verbose = 0
-    
-    if len(sys.argv) > 3:
-        dir = sys.argv[3]
-    else:
-        dir = "setup-{}".format(setup_idx)
+    setup_idx = int( sys.argv[1] )
+    verbose = 1
+    dir = "setup-{}".format(setup_idx)
 
     # Load setup
     setup = setup_lookup(setup_idx)
 
     # Directory to save the activations (create the directory if it does not exist)
     Path( "./"+dir ).mkdir(parents=True, exist_ok=True) 
-    
+
     # The activations will be saved in a subdirectory unique to this execution
     while True:
         timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -46,8 +35,9 @@ if __name__ == "__main__":
             os.mkdir("./"+dir+"/"+subdir)
             break
         except:
-             pass
+                pass
     path = "./"+dir+"/"+subdir+"/"
+    print("Activations will be saved in:", path)
 
     # Load dataset
     ratio = setup["train_ratio"]  # ratio of the training set to the test set
@@ -55,7 +45,7 @@ if __name__ == "__main__":
         dataset = buildDatasets( *loadMNISTData(root="data"), ratio=ratio, name="mnist" )
     elif setup["dataset"] == "synthetic":
         dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic" )
-    
+
     loader = buildDataLoader(dataset, batch_size=setup["batch_size"])
 
     # Choose torch device
@@ -65,7 +55,7 @@ if __name__ == "__main__":
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")     
-    # print("Using device:", device)
+    print("Using device:", device)
 
     # Train model
     save = True
@@ -82,10 +72,42 @@ if __name__ == "__main__":
     optimizer = setup["optimizer"]( model.parameters() )
 
     if save:
-       save_setup(setup, path=path, fname="setup")
+        save_setup(setup, path=path, fname="setup")
 
+    train_loss = []
+    test_loss = []
+    test_acc = []
     for epoch in range(1, setup["n_epochs"] + 1):
-            train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose)
-            test(model, setup, loader["test"], device, verbose=verbose)
+            train_loss_item = train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose)
+            test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
             if save and epoch%save_interval == 0:
                     save_activations(model, dataset["full"], epoch, device, path=path)
+            train_loss.append(train_loss_item)
+            test_loss.append(test_loss_item)
+            test_acc.append(test_acc_item)
+
+    plt.figure()
+    plt.plot(train_loss, label="train")
+    plt.plot(test_loss, label="test")
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.savefig(path+"loss.png", dpi=300, bbox_inches="tight")
+    plt.show()
+
+    np.savez_compressed( path+"loss", train_loss=train_loss, test_loss=test_loss, test_acc=test_acc)
+
+    plt.figure()
+    plt.plot(test_acc, label="test")
+    plt.xlabel("Epoch")
+    plt.ylabel("Test Accuracy")
+    plt.legend()
+    plt.savefig(path+"acc.png", dpi=300, bbox_inches="tight")
+    plt.show()
+
+    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], path, interval=1)
+    np.savez_compressed( path+"mi", mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
+
+    plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
+    plt.savefig(path+"info-plan.png", dpi=300, bbox_inches="tight")
+    plt.show()

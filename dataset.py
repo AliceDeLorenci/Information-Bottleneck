@@ -1,3 +1,18 @@
+"""
+Support methods and classes for loading and handling datasets.
+
+class CustomDataset: encapsulates a dataset with standard access to the data and targets.
+
+loadSyntheticData: load synthetic dataset used by Tishby et al. (2017).
+
+loadMNISTData: load MNIST dataset from torchvision.datasets.MNIST.
+
+buildDatasets: build training and test datasets from the given data and targets.
+
+buildDataLoader: build data loaders (train and test) for the given dataset.
+
+plotimg: plot gray scale image given as array.
+"""
 import torch
 import torchvision
 from torch.utils.data import Dataset, DataLoader
@@ -6,6 +21,18 @@ import scipy as sp
 import matplotlib.pyplot as plt
 
 class CustomDataset(Dataset):
+    """
+    Encapsulates a dataset with standard access to the data and targets.
+
+    Attributes:
+        data: torch.tensor, input data.
+        targets: torch.tensor, targets for the input data.
+    
+    Methods:
+        __init__: constructor for the class.
+        __len__: returns the number of samples in the dataset.
+        __getitem__: returns the data and target for the given index.
+    """
     def __init__(self, data, targets):
         super(CustomDataset, self).__init__()
         self.data = data
@@ -59,13 +86,19 @@ def loadMNISTData(root):
 
 def buildDatasets(data, targets, ratio=0.8, seed=None, name=None):
     """
-    Build training and test datasets from the given data and targets.
+    Build training and test datasets from the given data and targets and stores them in dictionary:
+        dataset["train"]: training dataset.
+        dataset["test"]: test dataset.
+        dataset["full"]: full dataset.
+        dataset["n_features"]: number of features in the dataset.
+        dataset["name"]: name of the dataset.
 
     Args:
         data: torch.tensor, input data.
         targets: torch.tensor, targets for the input data.
         ratio: float, ratio of the training set to the test set.
         seed: int, random seed for the data shuffling.
+        name: str, name of the dataset.
     
     Returns:
         dataset: dict, dictionary containing training and test datasets, as well as the full dataset and the number of features.
@@ -89,9 +122,12 @@ def buildDatasets(data, targets, ratio=0.8, seed=None, name=None):
 def buildDataLoader(dataset, batch_size=64):
     """
     Build data loaders for the given dataset.
+        loader["train"]: training data loader.
+        loader["test"]: test data loader.
+        loader["dataset"]: dictionary containing the dataset.
 
     Args:
-        dataset: dict, dictionary containing training and test datasets, as well as the full dataset and the number of features.
+        dataset: dict, dictionary containing at least the training and test datasets.
         batch_size: int, size of the mini-batches.
     
     Returns:

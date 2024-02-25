@@ -1,3 +1,19 @@
+"""
+This file contains the functions to compute the mutual information 
+between the input data and the layer activations, I(X,T), and between 
+the layer activations and the targets, I(T,Y), and to plot the information plane.
+
+get_label_distribution: compute the distribution of the labels in the dataset.
+
+get_distribution: compute the row distribution of the given array.
+
+mi_xt_ty: compute mutual information (MI) between neural network inputs and layer activations, I(X,T), 
+and between layer activations and targets, I(T, Y).
+
+compute_mi: load all activation data from folder and compute the mutual information.
+
+plot_info_plan: plot the given mutual information values for each layer and each epoch in the information plane.
+"""
 import torch
 import torch.nn.functional as F
 
@@ -19,19 +35,24 @@ def get_label_distribution(target):
     return count/len(target)
 
 def get_distribution(x): # compute array's row distribution
-
-    """
-    unique, inverse_indices, count = np.unique(x, axis=0, return_inverse=True, return_counts=True)
-    unique : sorted unique values
-    inverse_indices : indices to reconstruct original array from unique array
-    count : number of times each unique value appears in the original array
-
-    obs: the unique_inverse indices will be used instead of the unique values since what matters is the distribution, not the values themselves
+    """"
+    Compute the row distribution of the given array.
+    
+    Args:
+        x: np.array, input array (number of samples, number of features)
+    
+    Observations:
+        unique, inverse_indices, count = np.unique(x, axis=0, return_inverse=True, return_counts=True)
+            unique : sorted unique values
+            inverse_indices : indices to reconstruct original array from unique array
+            count : number of times each unique value appears in the original array
+        The unique_inverse indices will be used instead of the unique values since
+        what matters is the distribution, not the values themselves.
     """
     _, inverse_indices, count = np.unique(x, axis=0, return_inverse=True, return_counts=True)
     return count / np.sum(count), inverse_indices
 
-def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1]):
+def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1], bin_size=None):
     """
     Compute mutual information (MI) between neural network inputs and layer activations, I(X,T), and between layer activations and targets, I(T, Y).
 
@@ -40,12 +61,17 @@ def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1]):
         y : targets
         t : activations
         p_y : distribution of the targets
-        n_bins : number of bins used to discretize activations
-        bounds : bounds for the activation values
+        n_bins : number of bins used to discretize activations, default is 30
+        bounds : bounds for the activation values, default is [-1,1]
+        bin_size : size of the bins used to discretize activations, used instead of n_bins and bounds if not None
     """
 
     # discretize activations
-    bin_size = (bounds[1] - bounds[0]) / n_bins
+    if bin_size is None:
+        assert n_bins > 0, "n_bins must be a positive integer"
+        assert len(bounds) == 2, "bounds must be a list with two elements"
+        bin_size = (bounds[1] - bounds[0]) / n_bins
+
     t_binned = (t - bounds[0]) // bin_size          # determine to which bin each activation value belongs to and substitute for binned value
 
     p_t, inverse_indices_t = get_distribution( t_binned )    # binned activation's distribution
@@ -67,7 +93,24 @@ def mi_xt_ty(x, y, t, p_y, n_bins=30, bounds=[-1,1]):
 
     return mi_xt, mi_ty
 
-def compute_mi(dataset, path, interval=100):
+def compute_mi(dataset, path, interval=100, bin_size=None):
+    """
+    Load all activation data from folder and compute the mutual information.
+    The files in the folder should be named "activations_epoch_*.<npy/npz>",
+    each hfile contains the activations for all layers in the network for a given epoch, 
+    and each array in the file should contain the activations for a given layer.
+
+    Args:
+        dataset : dataset object
+        path : path to the folder containing the activation data
+        interval : interval between epochs to compute the mutual information
+        bin_size : size of the bins used to discretize activations, optional
+    
+    Returns:
+        mi_xt_epochs : list of lists, mutual information between input and layer activations for each epoch (axis 0) and each layer (axis 1)
+        mi_ty_epochs : list of lists, mutual information between layer activations and targets for each epoch (axis 0) and each layer (axis 1)
+        epochs : epochs at which the mutual information was computed
+    """
     activation_file_name = []
     for file in os.listdir(path):
         if file.startswith("activations_epoch_"):
@@ -92,7 +135,7 @@ def compute_mi(dataset, path, interval=100):
         mi_xt_layers = []
         mi_ty_layers = []
         for key in activations:
-            mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, activations[key], p_y)
+            mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, activations[key], p_y, bin_size=bin_size)
             mi_xt_layers.append( mi_xt )
             mi_ty_layers.append( mi_ty )
 
