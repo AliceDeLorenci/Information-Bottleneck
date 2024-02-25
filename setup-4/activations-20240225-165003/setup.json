@@ -1,0 +1,22 @@
+{
+"dataset": "synthetic",
+"train_ratio": 0.8,
+"hidden_dims": [
+10,
+7,
+5,
+4,
+3
+],
+"output_dim": 1,
+"hidden_activation_f": "lambda input: F.tanh(input)      \n",
+"output_activation_f": "lambda input: F.sigmoid(input)   \n",
+"lr": 0.01,
+"momentum": 0.9,
+"weight_decay": 0.001,
+"optimizer": "lambda parameters: torch.optim.SGD( parameters, lr=setup[\"lr\"], momentum=setup[\"momentum\"], weight_decay=setup[\"weight_decay\"] )\n",
+"n_epochs": 10000,
+"batch_size": null,
+"loss_function": "lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)\n",
+"evaluate_correct": "lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )\n"
+}

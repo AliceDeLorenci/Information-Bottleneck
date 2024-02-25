@@ -3,7 +3,11 @@ compute_activations.sh
 compute_activations.py
 compute_mi.py
 compute_mi.sh
-setup-*/
+setup-*/activations-*/*
+!setup-*/activations-*/*.png
+!setup-*/activations-*/mi*
+!setup-*/activations-*/loss.npz
+!setup-*/activations-*/setup.json
 data/*
 !data/synthetic
 local*
