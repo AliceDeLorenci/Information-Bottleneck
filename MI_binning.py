@@ -22,6 +22,8 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 2:
         bin_size = float( sys.argv[2] )
+    else:
+        bin_size = None
 
     # Extract the setup index from the path and load setup
     setup_idx = int( path.split("/")[0].split("-")[-1] )

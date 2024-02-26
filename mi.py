@@ -72,6 +72,9 @@ def mi_xt_ty(x, y, t, p_y, activation="tanh", bin_size=0.05):
     else:
         lb = np.min(t)
         print("Activation function not supported, defaulting to zero lower bound")
+    
+    if bin_size is None:
+        bin_size = 0.05
 
     t_binned = (t - lb) // bin_size          # determine to which bin each activation value belongs to and substitute for binned value
 

@@ -128,8 +128,8 @@ Run experiments:
         - setup 4 (0.001)
     - [] what is the impact of the MI estimator
         - [] test different bin sizes
-        - [] test new MI estimator (Kraskov, 2004)
         - [] test new MI estimator (Kolchinsky, 2017)
+        - [] test new MI estimator (Kraskov, 2004)
     - [] test other bounded activations: sigmoid
     - [] test other unbounded activation: leaky relu, silu
 
@@ -166,6 +166,8 @@ Contribution: MI estimator
 [Questionable GitHub](https://github.com/lusinlu/fast-kraskov-mutual-information-estimation)
 
 In contrast to conventional MI estimators based on binning, their approach is based on entropy estimates from k-nearest neighbour distances.
+
+obs.: Seems to be computationally expensive.
 
 
 ## References

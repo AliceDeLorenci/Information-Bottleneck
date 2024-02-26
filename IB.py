@@ -1,5 +1,9 @@
 # python3 IB.py <setup_idx>
 
+# TODO: save initial random weights (epoch 0)
+# TODO: save weights instead of activations
+# TODO: save weights for each mini-batch
+
 import sys
 import os
 import datetime
@@ -45,6 +49,9 @@ if __name__ == "__main__":
         dataset = buildDatasets( *loadMNISTData(root="data"), ratio=ratio, name="mnist" )
     elif setup["dataset"] == "synthetic":
         dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic" )
+    else:
+        raise ValueError("Unknown dataset")
+    print("Dataset: {} -- nb training samples: {} -- nb test samples: {}".format(dataset["name"], len(dataset["train"]), len(dataset["test"])))
 
     loader = buildDataLoader(dataset, batch_size=setup["batch_size"])
 
