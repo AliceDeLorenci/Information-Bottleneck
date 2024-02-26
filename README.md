@@ -87,44 +87,30 @@ Modules:
 Run experiments:
 - IB.ipynb: drafts
 
-- IB.py
+- PIPELINE.py
+
+- TRAIN.py
 
     """
-    python3 IB.py <setup_idx>
+    python3 TRAIN.py <setup_idx>
 
-    1. Trains the NN defined by the chosen setup and saves the activations (for each epoch)
+    Trains the NN defined by the chosen setup and saves the weights (for each epoch)
     in a separate file inside a timestamped subdirectory:
-        setup-<setup_idx>/activations-<timestamp>/activations_epoch_<epoch_number>.npz
-    2. Saves the losses inside the timestamped subdirectory, as well as loss and accuracy plots:
-        setup-<setup_idx>/activations-<timestamp>/loss.npz
-    3. Computes the I(X, T) and I(T, Y) for all layers and epochs and saves:
-        setup-<setup_idx>/activations-<timestamp>/mi.npz
+        setup-<setup_idx>/activations-<timestamp>/weights_epoch_<epoch_number>.pt
     """"
 
-- IB.py
+- MI.py
 
     """
-    python3 IB.py <setup_idx>
+    python3 MI.py setup-<setup_idx>/activations-<timestamp>/ <bin_size>
 
-    1. Trains the NN defined by the chosen setup and saves the activations (for each epoch)
-    in a separate file inside a timestamped subdirectory:
-        setup-<setup_idx>/activations-<timestamp>/activations_epoch_<epoch_number>.npz
-    2. Saves the losses inside the timestamped subdirectory, as well as loss and accuracy plots:
-        setup-<setup_idx>/activations-<timestamp>/loss.npz
-    3. Computes the I(X, T) and I(T, Y) for all layers and epochs and saves:
-        setup-<setup_idx>/activations-<timestamp>/mi.npz
-    """"
-
-- MI_binning.py
-
-    """
-    python3 MI_binning.py setup-<setup_idx>/activations-<timestamp>/ <bin_size>
-
-    1. Computes the I(X, T) and I(T, Y) for all layers and epochs and saves:
+    Computes the I(X, T) and I(T, Y) for all layers and epochs and saves:
         setup-<setup_idx>/activations-<timestamp>/mi-<bin_size>.npz
 
-    The folder setup-<setup_idx>/activations-<timestamp>/ should contain the activations, for each epoch, in separate folders:
+    The folder setup-<setup_idx>/activations-<timestamp>/ should contain either the activations, for each epoch, in separate folders:
         setup-<setup_idx>/activations-<timestamp>/activations_epoch_<epoch_number>.npz
+    or the weights, for each epoch, in separate folders:
+        setup-<setup_idx>/activations-<timestamp>/weights_epoch_<epoch_number>.pt
     """"
 
 ## TODO

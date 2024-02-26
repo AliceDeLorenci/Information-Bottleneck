@@ -1,4 +1,4 @@
-# python3 MI_binning.py setup-<setup_idx>/activations-<timestamp>/ <bin_size>
+# python3 MI.py setup-<setup_idx>/activations-<timestamp>/ <bin_size>
 
 import sys
 import os

@@ -1,4 +1,4 @@
-# python3 IB.py <setup_idx>
+# python3 TRAIN.py <setup_idx>
 
 # TODO: save initial random weights (epoch 0)!!
 # TODO: save weights for each mini-batch
@@ -112,13 +112,13 @@ if __name__ == "__main__":
     plt.savefig(path+"acc.png", dpi=300, bbox_inches="tight")
     plt.show()
 
-    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
-                                                    setup, 
-                                                    path, 
-                                                    interval=1, 
-                                                    device=device)
-    np.savez_compressed( path+"mi", mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
+    # mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
+    #                                                 setup, 
+    #                                                 path, 
+    #                                                 interval=1, 
+    #                                                 device=device)
+    # np.savez_compressed( path+"mi", mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
 
-    plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
-    plt.savefig(path+"info-plan.png", dpi=300, bbox_inches="tight")
-    plt.show()
+    # plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
+    # plt.savefig(path+"info-plan.png", dpi=300, bbox_inches="tight")
+    # plt.show()
