@@ -9,6 +9,8 @@ train: train the model for one epoch.
 test: evaluate the model on test set.
 
 save_activations: save the activations of the model for the given epoch and dataset.
+
+save_weights: save the weights of the model for the given epoch and dataset.
 """
 
 import torch
@@ -146,9 +148,11 @@ def test(model, setup, test_loader, device, verbose=1):
     
     return test_loss.item(), correct.item()
 
+
 def save_activations(model, dataset, epoch, device, path="./save/"):
     """
-    Save the activations of the model for the given dataset.
+    Save the activations of the model for the given dataset and epoch on the file:
+        <path>activations_epoch_<epoch>.npz
 
     Args:
         model: torch.nn.Module, model to evaluate.
@@ -166,3 +170,48 @@ def save_activations(model, dataset, epoch, device, path="./save/"):
         layer_activations = [ activation.detach().cpu().numpy() for activation in layer_activations ]
 
         np.savez_compressed(path+"activations_epoch_"+str(epoch), *layer_activations)
+
+def return_activations(model, dataset, device):
+    """
+    Returns the activations of the model for the given dataset.
+
+    Args:
+        model: torch.nn.Module, model to evaluate.
+        dataset: dataset.CustomDataset, dataset to evaluate the model on.
+        device: torch.device, device to use for the computation.
+    """
+    with torch.no_grad():
+
+        data = dataset.data.to(device)
+        _, layer_activations = model(data)
+
+        layer_activations = [ activation.detach().cpu().numpy() for activation in layer_activations ]
+
+        return layer_activations
+    
+def save_weights(model, epoch, path="./save/"):
+    """
+    Save the weights of the model for the given dataset":
+        <path>weights_epoch_<epoch>.pt
+
+    Args:
+        model: torch.nn.Module, model to evaluate.
+        epoch: int, current epoch number.
+        path: str, path to the directory where the data is saved.
+    """
+
+    torch.save(model.state_dict(), path+"weights_epoch_"+str(epoch)+".pt")
+
+def load_weights(model, device, file):
+    """
+    Load the weights of the model for the given dataset from:
+        <path>weights_epoch_<epoch>.pt
+
+    Args:
+        model: torch.nn.Module, model to evaluate.
+        device: torch.device, device to use for the computation.
+        file: str, path to the file containing the weights.
+    """
+
+    model.load_state_dict( torch.load(file, map_location=device) )
+    model.eval()

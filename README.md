@@ -85,7 +85,21 @@ Modules:
     """ 
 
 Run experiments:
-- IB.ipynb
+- IB.ipynb: drafts
+
+- IB.py
+
+    """
+    python3 IB.py <setup_idx>
+
+    1. Trains the NN defined by the chosen setup and saves the activations (for each epoch)
+    in a separate file inside a timestamped subdirectory:
+        setup-<setup_idx>/activations-<timestamp>/activations_epoch_<epoch_number>.npz
+    2. Saves the losses inside the timestamped subdirectory, as well as loss and accuracy plots:
+        setup-<setup_idx>/activations-<timestamp>/loss.npz
+    3. Computes the I(X, T) and I(T, Y) for all layers and epochs and saves:
+        setup-<setup_idx>/activations-<timestamp>/mi.npz
+    """"
 
 - IB.py
 
@@ -115,23 +129,39 @@ Run experiments:
 
 ## TODO
 
+Code corrections:
+- save initial random weights
+- save weights for each mini-batch
+
 - Synthetic dataset:
     - [ok] tanh 
         - Motivation: reproducing paper
         - setup 1
+        - [] rerun for new protocol
     - [ok] relu 
         - Motivation: very restricted test setting in the paper, testing more popular activation
         - setup 2
+        - [] rerun for new protocol
     - [ok] what is the impact o regularization: weight decay (setup 3 and 4)
         - Motivation: compression phase is hypothetised to relate to generalization, it is well known regularization propotes regularization, therefore the hypothesis is that we will observe more significant compression
         - setup 3 (0.0001)
+        - [] rerun for new protocol
         - setup 4 (0.001)
+        - [] rerun for new protocol
     - [] what is the impact of the MI estimator
         - [] test different bin sizes
         - [] test new MI estimator (Kolchinsky, 2017)
         - [] test new MI estimator (Kraskov, 2004)
     - [] test other bounded activations: sigmoid
     - [] test other unbounded activation: leaky relu, silu
+
+- MNIST dataset:
+    - [] tanh
+        - [] save weights
+        - [] binning MI
+    - [] relu
+        - [] save weights
+        - [] binning MI
 
 - Reproduce results from IB paper
 - Extend to MNIST: tanh, relu

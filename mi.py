@@ -23,6 +23,8 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import os
 
+from nn import Network, load_weights, return_activations
+
 def get_label_distribution(target):
     """
     Compute the distribution of the labels in the dataset.
@@ -71,7 +73,7 @@ def mi_xt_ty(x, y, t, p_y, activation="tanh", bin_size=0.05):
         lb = 0
     else:
         lb = np.min(t)
-        print("Activation function not supported, defaulting to zero lower bound")
+        print("Activation function not supported, defaulting to np.min lower bound")
     
     if bin_size is None:
         bin_size = 0.05
@@ -97,15 +99,23 @@ def mi_xt_ty(x, y, t, p_y, activation="tanh", bin_size=0.05):
 
     return mi_xt, mi_ty
 
-def compute_mi(dataset, path, interval=100, hidden_activation="tanh", output_activation="sigmoid", bin_size=None):
+def compute_mi(dataset, setup, path, interval=100, bin_size=None, device=torch.device("cpu")):
     """
-    Load all activation data from folder and compute the mutual information.
-    The files in the folder should be named "activations_epoch_*.<npy/npz>",
-    each hfile contains the activations for all layers in the network for a given epoch, 
-    and each array in the file should contain the activations for a given layer.
+    If the given path stores activations, load all activation data from folder and compute the mutual information.
+    If the given path stores weights, load all weights data, compute activations and compute the mutual information.
+
+    The files in the folder should be named either:
+        "activations_epoch_*.<npy/npz>"
+    or:
+        "weights_epoch_*.pt"
+    
+    In the first case, each file should contain the activations for all layers in the network for a given epoch, 
+    and each array in the file should contain the activations for a given layer. In the second case, each file
+    should contain the model state dictionary for a given epoch.
 
     Args:
-        dataset : dataset object
+        dataset : dataset, dataset to use to compute the MI
+        setup : dictionary, setup dictionary containing at least the model configuration
         path : path to the folder containing the activation data
         interval : interval between epochs to compute the mutual information
         bin_size : size of the bins used to discretize activations, optional
@@ -119,7 +129,30 @@ def compute_mi(dataset, path, interval=100, hidden_activation="tanh", output_act
     for file in os.listdir(path):
         if file.startswith("activations_epoch_"):
             activation_file_name.append(file)
+    
+    weights_file_name = []
+    for file in os.listdir(path):
+        if file.startswith("weights_epoch_"):
+            weights_file_name.append(file)
 
+    if len(activation_file_name) > 0:
+        type = "activations"
+        file_name = activation_file_name
+    else:
+        type = "weights"
+        file_name = weights_file_name
+    print("Data type:", type)
+    
+    if type == "weights":
+        model = Network(
+            input_dim=dataset.data.shape[1], 
+            hidden_dims=setup["hidden_dims"],
+            output_dim=setup["output_dim"],
+            hidden_activation_f=setup["hidden_activation_f"],
+            output_activation_f=setup["output_activation_f"]
+            ).to(device)
+    
+    # empirical probability of the targets
     p_y = get_label_distribution(dataset.targets)
 
     mi_xt_epochs = []
@@ -127,25 +160,36 @@ def compute_mi(dataset, path, interval=100, hidden_activation="tanh", output_act
     epochs = []
     
     counter = 0
-    for file in activation_file_name:
+    for file in file_name:
         counter += 1
-        print("{}/{}".format(counter, len(activation_file_name)), end='\r')
+        print("{}/{}".format(counter, len(file_name)), end='\r')
         
         epoch = int(file.split('_')[-1].split('.')[0])
         if epoch % interval != 0:
             continue
 
-        activations = np.load(path+file)
+        if type == "activations":
+            activations = np.load(path+file)
+            activations = [ activations[key] for key in activations.keys() ]
+        else:
+            load_weights(model, device, path+file)
+            activations = return_activations(model, dataset, device)
+
         mi_xt_layers = []
         mi_ty_layers = []
-        for key in activations:
-            if key == list(activations.keys())[-1]:
-                activation_type = output_activation
-            else:
-                activation_type = hidden_activation
-            mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, activations[key], p_y, activation=activation_type, bin_size=bin_size)
+
+        # activations for hidden layers
+        for act in activations[:-1]:
+            activation_type = setup["hidden_activation"]
+            mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, act, p_y, activation=activation_type, bin_size=bin_size)
             mi_xt_layers.append( mi_xt )
             mi_ty_layers.append( mi_ty )
+
+        # activations for output layer
+        activation_type = setup["output_activation"]
+        mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, activations[-1], p_y, activation=activation_type, bin_size=bin_size)
+        mi_xt_layers.append( mi_xt )
+        mi_ty_layers.append( mi_ty )
 
         mi_xt_epochs.append( mi_xt_layers )
         mi_ty_epochs.append( mi_ty_layers )

@@ -25,6 +25,15 @@ if __name__ == "__main__":
     else:
         bin_size = None
 
+    # Choose torch device
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")     
+    print("Using device:", device)
+
     # Extract the setup index from the path and load setup
     setup_idx = int( path.split("/")[0].split("-")[-1] )
     setup = setup_lookup(setup_idx)
@@ -37,11 +46,11 @@ if __name__ == "__main__":
         dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic" )
 
     mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
+                                                    setup,
                                                     path, 
-                                                    hidden_activation=setup["hidden_activation"], 
-                                                    output_activation=setup["output_activation"],
                                                     interval=1, 
-                                                    bin_size=bin_size)
+                                                    bin_size=bin_size,
+                                                    device=device)
     np.savez_compressed( path+"mi-{}".format(bin_size), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
 
     plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)

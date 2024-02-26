@@ -1,7 +1,6 @@
 # python3 IB.py <setup_idx>
 
-# TODO: save initial random weights (epoch 0)
-# TODO: save weights instead of activations
+# TODO: save initial random weights (epoch 0)!!
 # TODO: save weights for each mini-batch
 
 import sys
@@ -15,7 +14,7 @@ import torch
 
 from dataset import buildDatasets, buildDataLoader, loadMNISTData, loadSyntheticData
 from mi import compute_mi, plot_info_plan
-from nn import Network, train, test, save_activations
+from nn import Network, train, test, save_activations, save_weights
 from setups import setup_lookup
 from utils import save_setup, load_setup
 
@@ -41,7 +40,7 @@ if __name__ == "__main__":
         except:
                 pass
     path = "./"+dir+"/"+subdir+"/"
-    print("Activations will be saved in:", path)
+    print("Weights will be saved in:", path)
 
     # Load dataset
     ratio = setup["train_ratio"]  # ratio of the training set to the test set
@@ -88,7 +87,8 @@ if __name__ == "__main__":
             train_loss_item = train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose)
             test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
             if save and epoch%save_interval == 0:
-                    save_activations(model, dataset["full"], epoch, device, path=path)
+                    # save_activations(model, dataset["full"], epoch, device, path=path)
+                    save_weights(model, epoch, path=path)
             train_loss.append(train_loss_item)
             test_loss.append(test_loss_item)
             test_acc.append(test_acc_item)
@@ -112,7 +112,11 @@ if __name__ == "__main__":
     plt.savefig(path+"acc.png", dpi=300, bbox_inches="tight")
     plt.show()
 
-    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], path, interval=1)
+    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
+                                                    setup, 
+                                                    path, 
+                                                    interval=1, 
+                                                    device=device)
     np.savez_compressed( path+"mi", mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
 
     plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
