@@ -187,7 +187,18 @@ def save_weights(model, epoch, path="./save/"):
         epoch: int, current epoch number.
         path: str, path to the directory where the data is saved.
     """
-
+    if epoch < 20:       # Log for all first 20 epochs
+        pass
+    elif epoch < 100:    # Then for every 5th epoch
+        if not epoch % 5 == 0:
+            return
+    elif epoch < 200:    # Then every 10th
+        if not epoch % 10 == 0:
+            return
+    else:                # Then every 100th
+        if not epoch % 100 == 0:
+            return
+        
     torch.save(model.state_dict(), path+"weights_epoch_"+str(epoch)+".pt")
 
 def load_weights(model, device, file):

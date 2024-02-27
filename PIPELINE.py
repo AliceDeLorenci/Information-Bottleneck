@@ -1,7 +1,4 @@
-# python3 TRAIN.py <setup_idx>
-
-# TODO: save initial random weights (epoch 0)!!
-# TODO: save weights for each mini-batch
+# python3 PIPELINE.py <setup_idx>
 
 import sys
 import os
@@ -21,6 +18,10 @@ from utils import save_setup, load_setup
 REPRODUCIBILITY = True      # whether to set seeds for reproducibility
 SAVE_ACTIVATIONS = False    # whether to save activations (True) or weights (False)
 SAVING_INTERVAL = 1        # interval for saving activations or weights
+
+BINNING_ESTIMATOR = False   # whether to use binning estimator (True) or KDE (False)
+INTERVAL = 1                # interval for computing MI
+BIN_SIZE = None             # bin size for binning estimator
 
 if __name__ == "__main__":
 
@@ -125,13 +126,16 @@ if __name__ == "__main__":
     plt.savefig(path+"acc.png", dpi=300, bbox_inches="tight")
     plt.show()
 
-    # mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
-    #                                                 setup, 
-    #                                                 path, 
-    #                                                 interval=1, 
-    #                                                 device=device)
-    # np.savez_compressed( path+"mi", mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
+    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"] if setup["dataset"] == "synthetic" else dataset["test"], 
+                                                    setup,
+                                                    path, 
+                                                    interval=INTERVAL, 
+                                                    bin_size=None,
+                                                    device=device,
+                                                    binning_estimator=BINNING_ESTIMATOR)
+    
+    np.savez_compressed( path+"mi-{}".format(BIN_SIZE if BINNING_ESTIMATOR else "kde"), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
 
-    # plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
-    # plt.savefig(path+"info-plan.png", dpi=300, bbox_inches="tight")
-    # plt.show()
+    plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
+    plt.savefig(path+"info-plan-{}.png".format(BIN_SIZE if BINNING_ESTIMATOR else "kde"), dpi=300, bbox_inches="tight")
+    plt.show()

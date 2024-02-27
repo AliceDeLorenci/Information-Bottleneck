@@ -2,6 +2,7 @@ import torch
 import torchvision
 from torch.utils.data import Dataset, DataLoader
 
+import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 
@@ -93,7 +94,8 @@ def buildDatasets(data, targets, ratio=0.8, seed=None, name=None):
 
     n = len( data )
     n_train = int( n * ratio )
-    idx = torch.randperm( n )
+    # idx = torch.randperm( n )     #### !!!!!
+    idx = np.arange( n )
 
     dataset = dict()
     dataset["train"] = CustomDataset( data[ idx[:n_train] ], targets[ idx[:n_train] ] )

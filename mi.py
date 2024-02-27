@@ -89,7 +89,8 @@ def mi_kde_xt_ty(x, y, t, p_y):
     DO_LOWER = False
 
     # Compute marginal entropies
-    noise_variance = 1e-3 
+    # noise_variance = 1e-3 # synthetic
+    noise_variance = 1e-1   # mnist
     h_upper = entropy_estimator_kl(t, noise_variance)
     if DO_LOWER:
         h_lower = entropy_estimator_bd(t, noise_variance)
