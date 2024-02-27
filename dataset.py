@@ -1,18 +1,3 @@
-"""
-Support methods and classes for loading and handling datasets.
-
-class CustomDataset: encapsulates a dataset with standard access to the data and targets.
-
-loadSyntheticData: load synthetic dataset used by Tishby et al. (2017).
-
-loadMNISTData: load MNIST dataset from torchvision.datasets.MNIST.
-
-buildDatasets: build training and test datasets from the given data and targets.
-
-buildDataLoader: build data loaders (train and test) for the given dataset.
-
-plotimg: plot gray scale image given as array.
-"""
 import torch
 import torchvision
 from torch.utils.data import Dataset, DataLoader

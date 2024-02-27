@@ -1,19 +1,3 @@
-"""
-This file contains the functions to compute the mutual information 
-between the input data and the layer activations, I(X,T), and between 
-the layer activations and the targets, I(T,Y), and to plot the information plane.
-
-get_label_distribution: compute the distribution of the labels in the dataset.
-
-get_distribution: compute the row distribution of the given array.
-
-mi_xt_ty: compute mutual information (MI) between neural network inputs and layer activations, I(X,T), 
-and between layer activations and targets, I(T, Y).
-
-compute_mi: load all activation data from folder and compute the mutual information.
-
-plot_info_plan: plot the given mutual information values for each layer and each epoch in the information plane.
-"""
 import torch
 import torch.nn.functional as F
 
@@ -22,6 +6,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import os
+
+import scipy as sp
 
 from nn import Network, load_weights, return_activations
 
@@ -54,9 +40,95 @@ def get_distribution(x): # compute array's row distribution
     _, inverse_indices, count = np.unique(x, axis=0, return_inverse=True, return_counts=True)
     return count / np.sum(count), inverse_indices
 
+###
+def Kget_dists(X):
+    """Keras code to compute the pairwise distance matrix for a set of
+    vectors specifie by the matrix X.
+    """
+    x2 = np.expand_dims(np.sum(np.square(X), axis=1), 1)
+    dists = x2 + np.transpose(x2) - 2*np.dot(X, np.transpose(X))
+    return dists
+
+def get_shape(x):
+    dims = float( x.shape[1] )
+    N    = float( x.shape[0] )
+    return dims, N
+
+def entropy_estimator_kl(x, var):
+    # KL-based upper bound on entropy of mixture of Gaussians with covariance matrix var * I 
+    #  see Kolchinsky and Tracey, Estimating Mixture Entropy with Pairwise Distances, Entropy, 2017. Section 4.
+    #  and Kolchinsky and Tracey, Nonlinear Information Bottleneck, 2017. Eq. 10
+    dims, N = get_shape(x)
+    dists = Kget_dists(x)
+    dists2 = dists / (2*var)
+    normconst = (dims/2.0)*np.log(2*np.pi*var)
+    lprobs = sp.special.logsumexp(-dists2, axis=1) - np.log(N) - normconst
+    h = -np.mean(lprobs)
+    return dims/2 + h
+
+def entropy_estimator_bd(x, var):
+    # Bhattacharyya-based lower bound on entropy of mixture of Gaussians with covariance matrix var * I 
+    #  see Kolchinsky and Tracey, Estimating Mixture Entropy with Pairwise Distances, Entropy, 2017. Section 4.
+    dims, N = get_shape(x)
+    val = entropy_estimator_kl(x,4*var)
+    return val + np.log(0.25)*dims/2
+
+def kde_condentropy(output, var):
+    # Return entropy of a multivariate Gaussian, in nats
+    dims = output.shape[1]
+    return (dims/2.0)*(np.log(2*np.pi*var) + 1)
+###
+
+def mi_kde_xt_ty(x, y, t, p_y):
+    """
+    Compute mutual information (MI), using the KDE estimator, between neural network inputs and layer activations, I(X,T), and between layer activations and targets, I(T, Y).
+
+    Args:
+        x : inputs
+        y : targets
+        t : activations
+        p_y : distribution of the targets
+    """
+    DO_LOWER = False
+
+    # Compute marginal entropies
+    noise_variance = 1e-3 
+    h_upper = entropy_estimator_kl(t, noise_variance)
+    if DO_LOWER:
+        h_lower = entropy_estimator_bd(t, noise_variance)
+        
+    # Layer activity given input. This is simply the entropy of the Gaussian noise
+    hM_given_X = kde_condentropy(t, noise_variance)
+
+    # Compute conditional entropies of layer activity given output
+    NUM_LABELS = len(p_y)
+    hM_given_Y_upper=0.
+    for i in range(NUM_LABELS):
+        idx = y==i
+        hcond_upper = entropy_estimator_kl(t[idx,:], noise_variance) 
+        hM_given_Y_upper += p_y[i] * hcond_upper
+
+    if DO_LOWER:
+        hM_given_Y_lower=0.
+        for i in range(NUM_LABELS):
+            hcond_lower = entropy_estimator_bd(t[idx,:], noise_variance)
+            hM_given_Y_lower += p_y[i] * hcond_lower
+
+    nats2bits = 1.0/np.log(2)
+    mi_xt = nats2bits * (h_upper - hM_given_X)
+    mi_ty = nats2bits * (h_upper - hM_given_Y_upper)
+    h_t_upper = nats2bits * h_upper
+
+    if DO_LOWER:
+        mi_xt_lower = nats2bits * (h_lower - hM_given_X)
+        mi_ty_lower = nats2bits * (h_lower - hM_given_Y_lower)
+        h_t_lower = nats2bits * h_lower
+
+    return mi_xt, mi_ty, h_t_upper #, mi_xt_lower, mi_ty_lower, h_t_lower
+
 def mi_xt_ty(x, y, t, p_y, activation="tanh", bin_size=0.05):
     """
-    Compute mutual information (MI) between neural network inputs and layer activations, I(X,T), and between layer activations and targets, I(T, Y).
+    Compute mutual information (MI), using the binning estimator, between neural network inputs and layer activations, I(X,T), and between layer activations and targets, I(T, Y).
 
     Args:
         x : inputs
@@ -181,7 +253,8 @@ def compute_mi(dataset, setup, path, interval=100, bin_size=None, device=torch.d
         # activations for hidden layers
         for act in activations[:-1]:
             activation_type = setup["hidden_activation"]
-            mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, act, p_y, activation=activation_type, bin_size=bin_size)
+            # mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, act, p_y, activation=activation_type, bin_size=bin_size)
+            mi_xt, mi_ty = mi_kde_xt_ty(dataset.data, dataset.targets, act, p_y)[:2]
             mi_xt_layers.append( mi_xt )
             mi_ty_layers.append( mi_ty )
 

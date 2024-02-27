@@ -1,18 +1,3 @@
-
-"""
-This module contains the implementation of a simple feedforward neural network using PyTorch.
-
-class Network: implementation of a simple feedforward neural network using PyTorch.
-
-train: train the model for one epoch.
-
-test: evaluate the model on test set.
-
-save_activations: save the activations of the model for the given epoch and dataset.
-
-save_weights: save the weights of the model for the given epoch and dataset.
-"""
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
