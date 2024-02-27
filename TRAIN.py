@@ -18,14 +18,24 @@ from nn import Network, train, test, save_activations, save_weights
 from setups import setup_lookup
 from utils import save_setup, load_setup
 
+REPRODUCIBILITY = True      # whether to set seeds for reproducibility
+SAVE_ACTIVATIONS = False    # whether to save activations (True) or weights (False)
+SAVING_INTERVAL = 1        # interval for saving activations or weights
+
 if __name__ == "__main__":
 
+    if REPRODUCIBILITY:
+        torch.manual_seed(0)
+        np.random.seed(0)
+
+    # Setup index defined via command line
     setup_idx = int( sys.argv[1] )
     verbose = 1
     dir = "setup-{}".format(setup_idx)
 
     # Load setup
     setup = setup_lookup(setup_idx)
+    print("Setup:", setup_idx)
 
     # Directory to save the activations (create the directory if it does not exist)
     Path( "./"+dir ).mkdir(parents=True, exist_ok=True) 
@@ -40,7 +50,10 @@ if __name__ == "__main__":
         except:
                 pass
     path = "./"+dir+"/"+subdir+"/"
-    print("Weights will be saved in:", path)
+    print("Results will be saved in:", path)
+
+    # Save setup
+    save_setup(setup, path=path, fname="setup")
 
     # Load dataset
     ratio = setup["train_ratio"]  # ratio of the training set to the test set
@@ -64,9 +77,6 @@ if __name__ == "__main__":
     print("Using device:", device)
 
     # Train model
-    save = True
-    save_interval = 1
-
     model = Network(
             input_dim=dataset["n_features"], 
             hidden_dims=setup["hidden_dims"],
@@ -77,22 +87,23 @@ if __name__ == "__main__":
 
     optimizer = setup["optimizer"]( model.parameters() )
 
-    if save:
-        save_setup(setup, path=path, fname="setup")
 
     train_loss = []
     test_loss = []
     test_acc = []
     for epoch in range(1, setup["n_epochs"] + 1):
-            train_loss_item = train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose)
-            test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
-            if save and epoch%save_interval == 0:
-                    # save_activations(model, dataset["full"], epoch, device, path=path)
-                    save_weights(model, epoch, path=path)
-            train_loss.append(train_loss_item)
-            test_loss.append(test_loss_item)
-            test_acc.append(test_acc_item)
+        train_loss_item = train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose)
+        test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
+        if epoch%SAVING_INTERVAL == 0:
+            if SAVE_ACTIVATIONS:
+                save_activations(model, dataset["full"], epoch, device, path=path)
+            else:
+                save_weights(model, epoch, path=path)
+        train_loss.append(train_loss_item)
+        test_loss.append(test_loss_item)
+        test_acc.append(test_acc_item)
 
+    # Plot training and test loss
     plt.figure()
     plt.plot(train_loss, label="train")
     plt.plot(test_loss, label="test")
@@ -102,8 +113,10 @@ if __name__ == "__main__":
     plt.savefig(path+"loss.png", dpi=300, bbox_inches="tight")
     plt.show()
 
+    # Save training and test loss
     np.savez_compressed( path+"loss", train_loss=train_loss, test_loss=test_loss, test_acc=test_acc)
 
+    # Plot test accuracy
     plt.figure()
     plt.plot(test_acc, label="test")
     plt.xlabel("Epoch")

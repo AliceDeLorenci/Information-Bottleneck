@@ -64,7 +64,7 @@ class Network(nn.Module):
     
 def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
     """
-    Train the model for one epoch.
+    Train the model for one [epoch] mini-batch.
 
     Args:
         model: torch.nn.Module, model to train.
@@ -78,7 +78,9 @@ def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
 
     model.train()
 
+    ### 
     for batch_idx, (data, target) in enumerate(train_loader):
+        # data, target = next(iter(train_loader))
         # move data to device
         data, target = data.to(device), target.to(device)
 
@@ -91,9 +93,10 @@ def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
         loss.backward()
         optimizer.step()
 
-        if verbose==2:
-            print('\rEpoch {}: Batch {}/{}: train loss {:.4f} '.format(epoch, batch_idx+1, len(train_loader), loss.item()), end='')
-    
+        # if verbose==2:
+            # print('\rEpoch {}: Batch {}/{}: train loss {:.4f} '.format(epoch, batch_idx+1, len(train_loader), loss.item()), end='')
+    ###
+            
     if verbose==1:
         print('Epoch {}: train loss {:.4f} '.format(epoch, loss.item()), end='')
 
@@ -170,7 +173,7 @@ def return_activations(model, dataset, device):
         data = dataset.data.to(device)
         _, layer_activations = model(data)
 
-        layer_activations = [ activation.detach().cpu().numpy() for activation in layer_activations ]
+        layer_activations = [ activation.detach() for activation in layer_activations ]
 
         return layer_activations
     

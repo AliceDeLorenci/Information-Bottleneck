@@ -15,6 +15,10 @@ from nn import Network, train, test, save_activations
 from setups import setup_lookup
 from utils import save_setup, load_setup
 
+
+BINNING_ESTIMATOR = False   # whether to use binning estimator (True) or KDE (False)
+INTERVAL = 1                # interval for computing MI
+
 if __name__ == "__main__":
 
     path = sys.argv[1]
@@ -45,14 +49,16 @@ if __name__ == "__main__":
     elif setup["dataset"] == "synthetic":
         dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic" )
 
-    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
+    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"] if setup["dataset"] == "synthetic" else dataset["test"], 
                                                     setup,
                                                     path, 
-                                                    interval=1, 
+                                                    interval=INTERVAL, 
                                                     bin_size=bin_size,
-                                                    device=device)
-    np.savez_compressed( path+"mi-kde-{}".format(bin_size), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
+                                                    device=device,
+                                                    binning_estimator=BINNING_ESTIMATOR)
+    
+    np.savez_compressed( path+"mi-{}".format(bin_size if BINNING_ESTIMATOR else "kde"), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
 
     plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
-    plt.savefig(path+"info-plan-kde-{}.png".format(bin_size), dpi=300, bbox_inches="tight")
+    plt.savefig(path+"info-plan-{}.png".format(bin_size if BINNING_ESTIMATOR else "kde"), dpi=300, bbox_inches="tight")
     plt.show()

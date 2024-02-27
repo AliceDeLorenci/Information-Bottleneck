@@ -124,20 +124,24 @@ Code corrections:
     - [ok] tanh 
         - Motivation: reproducing paper
         - setup 1
-        - [] rerun for new protocol
+        - [ok] rerun for new saving protocol
+        - [] rerun for KDE MI estimator
     - [ok] relu 
         - Motivation: very restricted test setting in the paper, testing more popular activation
         - setup 2
-        - [] rerun for new protocol
+        - [ok] rerun for new saving protocol
+        - [] rerun for KDE MI estimator
     - [ok] what is the impact o regularization: weight decay (setup 3 and 4)
         - Motivation: compression phase is hypothetised to relate to generalization, it is well known regularization propotes regularization, therefore the hypothesis is that we will observe more significant compression
         - setup 3 (0.0001)
-        - [] rerun for new protocol
+        - [ok] rerun for new saving protocol
+        - [] rerun for KDE MI estimator
         - setup 4 (0.001)
-        - [] rerun for new protocol
+        - [ok] rerun for new saving protocol
+        - [] rerun for KDE MI estimator
     - [] what is the impact of the MI estimator
         - [] test different bin sizes
-        - [] test new MI estimator (Kolchinsky, 2017)
+        - [ok] test new MI estimator (Kolchinsky, 2017)
         - [] test new MI estimator (Kraskov, 2004)
     - [] test other bounded activations: sigmoid
     - [] test other unbounded activation: leaky relu, silu
@@ -186,10 +190,20 @@ In contrast to conventional MI estimators based on binning, their approach is ba
 
 obs.: Seems to be computationally expensive.
 
+### Nonlinear Information Bottleneck
+
+obs.: Nice references towards connections with supervized learning and neuroscience.
+
+Problem with IB lagrangian optimization: for deterministic mappings, it is optimizaed by a same M irrespective of beta; taking the square of I(X, T) solves this problem.
+
+Contribution: method for performing IB on general settings, e.g., continuous valued random-variables, etc.
 
 ## References
 
 [Example project](https://github.com/fournierlouis/synaptic_sampling_rbm/blob/master/Rapport_Projet_Neurosciences___Synaptic_Sampling.pdf)
+
+- A G Dimitrov, J P Miller, Neural coding and decoding: communication channels and quantization, 2001
+    - Connection to neuro-science
 
 - Shwartz-Ziv & Tishby, 2017
     - HTML version: https://ar5iv.labs.arxiv.org/html/1703.00810
