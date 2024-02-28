@@ -130,20 +130,20 @@ Code corrections:
         - Motivation: reproducing paper
         - setup 1
         - [ok] rerun for new saving protocol
-        - [] rerun for KDE MI estimator
+        - [ok] rerun for KDE MI estimator
     - [ok] relu 
         - Motivation: very restricted test setting in the paper, testing more popular activation
         - setup 2
         - [ok] rerun for new saving protocol
-        - [] rerun for KDE MI estimator
+        - [ok] rerun for KDE MI estimator
     - [ok] what is the impact o regularization: weight decay (setup 3 and 4)
         - Motivation: compression phase is hypothetised to relate to generalization, it is well known regularization propotes regularization, therefore the hypothesis is that we will observe more significant compression
         - setup 3 (0.0001)
         - [ok] rerun for new saving protocol
-        - [] rerun for KDE MI estimator
+        - [ok] rerun for KDE MI estimator
         - setup 4 (0.001)
         - [ok] rerun for new saving protocol
-        - [] rerun for KDE MI estimator
+        - [ok] rerun for KDE MI estimator
     - [] what is the impact of the MI estimator
         - [] test different bin sizes
         - [ok] test new MI estimator (Kolchinsky, 2017)
@@ -152,9 +152,9 @@ Code corrections:
     - [] test other unbounded activation: leaky relu, silu
 
 - MNIST dataset:
-    - [] tanh
-        - [] save weights
-        - [] binning MI
+    - [ok] tanh
+        - [ok] save weights
+        - [ok] KDE MI
     - [] relu
         - [] save weights
         - [] binning MI

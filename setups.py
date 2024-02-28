@@ -328,6 +328,33 @@ def setup_lookup(idx):
             setup["batch_size"] = 128
             setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
+
+        elif idx == 112:
+                # - MNIST
+                # - Test accuracy: 
+                
+                # dataset parameters
+                setup["dataset"] = "mnist"
+                setup["train_ratio"] = 6/7
+
+                # network parameters
+                setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
+                setup["output_dim"] = 10                                                        # output layer size
+                setup["hidden_activation_f"] = lambda input: F.tanh(input)                      # activation function for the hidden layers
+                setup["hidden_activation"] = "tanh"
+                setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+                setup["output_activation"] = "log_softmax"
+
+                # optimizer
+                setup["lr"] = 0.001  
+                setup["momentum"] = 0.9
+                setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+                # training configuration
+                setup["n_epochs"] = 10000
+                setup["batch_size"] = None
+                setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+                setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
         
         elif idx == 103:
             # - MNIST
@@ -340,8 +367,8 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)                      # activation function for the hidden layers
-            setup["hidden_activation"] = "tanh"
+            setup["hidden_activation_f"] = lambda input: F.relu(input)                      # activation function for the hidden layers
+            setup["hidden_activation"] = "relu"
             setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
             setup["output_activation"] = "log_softmax"
 
