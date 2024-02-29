@@ -1,3 +1,5 @@
+Presentation: https://evento.renater.fr/survey/validation-du-cours-modelisation-en-neurosciences-si6wxs2u?participant_token=34fec314-ccc3-204c-f392-941007202536
+
 - on datasets.py **not shuffling**
 - on nn.py save_weights **only doing for some epochs**
 - for mnist, computing MI on **test set**
@@ -207,8 +209,6 @@ Contribution: method for performing IB on general settings, e.g., continuous val
 
 [Example project](https://github.com/fournierlouis/synaptic_sampling_rbm/blob/master/Rapport_Projet_Neurosciences___Synaptic_Sampling.pdf)
 
-- A G Dimitrov, J P Miller, Neural coding and decoding: communication channels and quantization, 2001
-    - Connection to neuro-science
 
 - Shwartz-Ziv & Tishby, 2017
     - HTML version: https://ar5iv.labs.arxiv.org/html/1703.00810
