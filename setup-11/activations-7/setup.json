@@ -1,0 +1,30 @@
+{
+"comments": "original paper setup",
+"dataset": "synthetic",
+"train_ratio": 0.85,
+"hidden_dims": [
+12,
+10,
+7,
+5,
+4,
+3,
+2
+],
+"output_dim": 1,
+"hidden_activation": "tanh",
+"output_activation": "sigmoid",
+"lr": 0.01,
+"momentum": 0.9,
+"optimizer": "lambda parameters: torch.optim.SGD( parameters, lr=setup[\"lr\"], momentum=setup[\"momentum\"] )\n",
+"n_epochs": 10000,
+"batch_size": null,
+"loss_function": "lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)\n",
+"evaluate_correct": "lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )\n",
+"shuffle": true,
+"seed": 162,
+"setup_idx": 11,
+"verbose": 0,
+"subdir": 7,
+"temporize": false
+}
