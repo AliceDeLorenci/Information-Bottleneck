@@ -70,7 +70,7 @@ def loadMNISTData(root):
 
     return data, targets
 
-def buildDatasets(data, targets, ratio=0.8, seed=None, name=None):
+def buildDatasets(data, targets, ratio=0.8, shuffle=True, seed=None, name=None):
     """
     Build training and test datasets from the given data and targets and stores them in dictionary:
         dataset["train"]: training dataset.
@@ -83,6 +83,7 @@ def buildDatasets(data, targets, ratio=0.8, seed=None, name=None):
         data: torch.tensor, input data.
         targets: torch.tensor, targets for the input data.
         ratio: float, ratio of the training set to the test set.
+        shuffle: bool, whether to shuffle the data before splitting.
         seed: int, random seed for the data shuffling.
         name: str, name of the dataset.
     
@@ -94,8 +95,10 @@ def buildDatasets(data, targets, ratio=0.8, seed=None, name=None):
 
     n = len( data )
     n_train = int( n * ratio )
-    # idx = torch.randperm( n )     #### !!!!!
-    idx = np.arange( n )
+    if shuffle:
+        idx = torch.randperm( n )
+    else:
+        idx = np.arange( n )
 
     dataset = dict()
     dataset["train"] = CustomDataset( data[ idx[:n_train] ], targets[ idx[:n_train] ] )

@@ -36,7 +36,7 @@ def save_setup(setup, path, fname=None):
     with open( path+fname+".json", "w" ) as outfile: 
         json.dump(setup, outfile, default=default, indent=0)
     
-def load_setup(folder, path="./save/", fname=None):
+def load_setup(path, fname=None):
     """
     Load the setup from a json file and convert lambda source code to lambda function.
 
@@ -48,11 +48,14 @@ def load_setup(folder, path="./save/", fname=None):
         loaded_results: dict, dictionary containing the setup parameters and functions.
     """
     if fname is None:
-        fname = "setup"
+        fname = "setup.json"
+    elif not fname.endswith(".json"):
+        fname = fname+".json"
 
-    with open( path+folder+"/"+fname+".json", "r" ) as infile: 
-        loaded_results = json.load(infile)
+    with open( path+fname, "r" ) as file: 
+        loaded_results = json.load(file)
     for key in ["hidden_activation_f", "output_activation_f", "optimizer", "loss_function", "evaluate_correct"]:
-        loaded_results[key] = eval( loaded_results[key] )
+        if key in loaded_results.keys():
+            loaded_results[key] = eval( loaded_results[key] )
     
     return loaded_results

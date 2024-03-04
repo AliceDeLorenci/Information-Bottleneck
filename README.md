@@ -92,6 +92,13 @@ Modules:
         load_setup: load the setup from a json file and convert lambda source code to lambda function.
         """ 
 
+- argparser.py
+
+        """
+        Utility functions to parse command line arguments.
+
+        get_main_parser: parse command line arguments and returns them as dictionary.
+
 Run experiments:
 - IB.ipynb: drafts
 
@@ -209,6 +216,11 @@ Contribution: method for performing IB on general settings, e.g., continuous val
 
 [Example project](https://github.com/fournierlouis/synaptic_sampling_rbm/blob/master/Rapport_Projet_Neurosciences___Synaptic_Sampling.pdf)
 
+- Neural coding and decoding: communication channels and quantization
+    - connection to neuroscience?
+
+- Information Bottleneck for Gaussian Variables
+    - closed form solution for gaussian random variables
 
 - Shwartz-Ziv & Tishby, 2017
     - HTML version: https://ar5iv.labs.arxiv.org/html/1703.00810

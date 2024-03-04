@@ -27,7 +27,7 @@ where output and target are the network output and the target values, respective
 """
 
 class Network(nn.Module):
-    def __init__(self, input_dim, hidden_dims, output_dim, hidden_activation_f=F.tanh, output_activation_f=F.sigmoid):
+    def __init__(self, input_dim, hidden_dims, output_dim, hidden_activation="tanh", output_activation="sigmoid"):
         """
         Args:
             input_dim: int, size of the input layer.
@@ -42,8 +42,20 @@ class Network(nn.Module):
         self.output_dim = output_dim
         self.n_hidden_layers = len(hidden_dims)
         
-        self.hidden_activation_f = hidden_activation_f
-        self.output_activation_f = output_activation_f
+        if hidden_activation=="tanh":
+            self.hidden_activation_f = torch.nn.functional.tanh
+        elif hidden_activation=="relu":
+            self.hidden_activation_f = torch.nn.functional.relu
+        else:
+            raise ValueError("Unknown activation")
+
+        if output_activation=="sigmoid":
+            self.output_activation_f = torch.nn.functional.sigmoid
+        elif output_activation=="log_softmax":
+            self.output_activation_f = lambda input: torch.nn.functional.log_softmax( input, dim=1 )
+        else:
+            raise ValueError("Unknown activation")
+        
 
         self.layers = nn.ModuleList()
         prev_dim = input_dim
@@ -62,7 +74,7 @@ class Network(nn.Module):
         activations.append( x )
         return x, activations
     
-def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
+def train(model, setup, train_loader, optimizer, device, epoch, verbose=1, epoch_is_iteration=False):
     """
     Train the model for one [epoch] mini-batch.
 
@@ -79,8 +91,10 @@ def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
     model.train()
 
     ### 
-    for batch_idx, (data, target) in enumerate(train_loader):
-        # data, target = next(iter(train_loader))
+    if epoch_is_iteration:
+
+        data, target = next(iter(train_loader))
+
         # move data to device
         data, target = data.to(device), target.to(device)
 
@@ -92,13 +106,30 @@ def train(model, setup, train_loader, optimizer, device, epoch, verbose=1):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+    
+    else:
 
-        # if verbose==2:
-            # print('\rEpoch {}: Batch {}/{}: train loss {:.4f} '.format(epoch, batch_idx+1, len(train_loader), loss.item()), end='')
-    ###
+        for batch_idx, (data, target) in enumerate(train_loader):
+            # move data to device
+            data, target = data.to(device), target.to(device)
+
+            # forward pass
+            output, _ = model(data)
+            loss = setup["loss_function"](output, target)
+
+            # optimization step
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            if verbose==2:
+                print('\rEpoch {}: Batch {}/{}: train loss {:.4f} '.format(epoch, batch_idx+1, len(train_loader), loss.item()), end='')
+        ### END FOR
             
     if verbose==1:
         print('Epoch {}: train loss {:.4f} '.format(epoch, loss.item()), end='')
+    elif verbose==0:
+        print('Epoch {}: train loss {:.4f} '.format(epoch, loss.item()), end='\r')
 
     return loss.item()
 
@@ -187,17 +218,6 @@ def save_weights(model, epoch, path="./save/"):
         epoch: int, current epoch number.
         path: str, path to the directory where the data is saved.
     """
-    if epoch < 20:       # Log for all first 20 epochs
-        pass
-    elif epoch < 100:    # Then for every 5th epoch
-        if not epoch % 5 == 0:
-            return
-    elif epoch < 200:    # Then every 10th
-        if not epoch % 10 == 0:
-            return
-    else:                # Then every 100th
-        if not epoch % 100 == 0:
-            return
         
     torch.save(model.state_dict(), path+"weights_epoch_"+str(epoch)+".pt")
 

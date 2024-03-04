@@ -16,7 +16,219 @@ def setup_lookup(idx):
     ######################################## SYNTHETIC ########################################
     if idx < 100:
 
-        if idx == 1:
+        if idx == 11:
+            setup["comments"] = "original paper setup"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.01                             
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = None
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 21:
+            setup["comments"] = "original paper setup [mini-batch][smaller lr]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.001                             
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 12:
+            setup["comments"] = "original paper setup but with relu activation function"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "relu"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.01                             
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = None
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 22:
+            setup["comments"] = "original paper setup but with relu activation function [mini-batch]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "relu"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.01                            
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 13:
+            setup["comments"] = "original paper setup but with weight decay"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.01                             
+            setup["momentum"] = 0.9
+            setup["weight_decay"] = 1e-4
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"], weight_decay=setup["weight_decay"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = None
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 23:
+            setup["comments"] = "original paper setup but with weight decay [mini-batch][smaller lr]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.001                             
+            setup["momentum"] = 0.9
+            setup["weight_decay"] = 1e-4
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"], weight_decay=setup["weight_decay"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 14:
+            setup["comments"] = "original paper setup but with weight decay"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.01                             
+            setup["momentum"] = 0.9
+            setup["weight_decay"] = 1e-3
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"], weight_decay=setup["weight_decay"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = None
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 24:
+            setup["comments"] = "original paper setup but with weight decay [mini-batch][smaller lr]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3, 2]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.001                             
+            setup["momentum"] = 0.9
+            setup["weight_decay"] = 1e-3
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"], weight_decay=setup["weight_decay"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 1:
             # - Synthetic dataset
             # - tanh activation function
             # - Test accuracy: 0.9634 in 10000 epochs
@@ -28,9 +240,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)
+            
             setup["hidden_activation"] = "tanh"      
-            setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+            
             setup["output_activation"] = "sigmoid"
 
             # optimizer
@@ -41,7 +253,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
 
         elif idx == 2:
@@ -56,9 +268,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
-            setup["hidden_activation_f"] = lambda input: F.relu(input)     
+            
             setup["hidden_activation"] = "relu"
-            setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+            
             setup["output_activation"] = "sigmoid"
 
             # optimizer
@@ -69,9 +281,9 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
-        
+
         elif idx == 20:
             # - Synthetic dataset
             # - relu activation function
@@ -84,9 +296,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
-            setup["hidden_activation_f"] = lambda input: F.relu(input)     
+            
             setup["hidden_activation"] = "relu"
-            setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+            
             setup["output_activation"] = "sigmoid"
 
             # optimizer
@@ -97,7 +309,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
         
         elif idx == 3:
@@ -112,9 +324,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)    
+            
             setup["hidden_activation"] = "tanh" 
-            setup["output_activation_f"] = lambda input: F.sigmoid(input)
+            
             setup["output_activation"] = "sigmoid"   
 
             # optimizer
@@ -126,7 +338,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
 
         elif idx == 4:
@@ -141,9 +353,9 @@ def setup_lookup(idx):
                 # network parameters
                 setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
                 setup["output_dim"] = 1                                         
-                setup["hidden_activation_f"] = lambda input: F.tanh(input)   
+                
                 setup["hidden_activation"] = "tanh"   
-                setup["output_activation_f"] = lambda input: F.sigmoid(input) 
+                
                 setup["output_activation"] = "sigmoid"  
 
                 # optimizer
@@ -155,7 +367,7 @@ def setup_lookup(idx):
                 # training configuration
                 setup["n_epochs"] = 10000
                 setup["batch_size"] = None
-                setup["loss_function"] = lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+                setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
                 setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
 
         elif idx == None:
@@ -170,9 +382,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 2                                       
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)      
+            
             setup["hidden_activation"] = "tanh"
-            setup["output_activation_f"] = lambda input: F.log_softmax(input, dim=1)   
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -182,7 +394,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 5000
             setup["batch_size"] = 256
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
         elif idx == None:
@@ -197,9 +409,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)      
+            
             setup["hidden_activation"] = "tanh"
-            setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+            
             setup["output_activation"] = "sigmoid"
 
             # optimizer
@@ -210,7 +422,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
         
         elif idx == None:
@@ -225,9 +437,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)     
+            
             setup["hidden_activation"] = "tanh" 
-            setup["output_activation_f"] = lambda input: F.sigmoid(input)   
+            
             setup["output_activation"] = "sigmoid"
 
             # optimizer
@@ -239,14 +451,14 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
         
         else:
             raise ValueError("Invalid index.")
     
     ######################################## MNIST ########################################
-    elif idx >= 100:  
+    elif idx >= 100 and idx<1000:  
         
         if idx == 101:
             # - MNIST
@@ -259,9 +471,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [512, 256, 64, 64, 32]                                   # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)                      # activation function for the hidden layers
+            
             setup["hidden_activation"] = "tanh"
-            setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -272,7 +484,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 1000
             setup["batch_size"] = 256
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
         elif idx == 111:
@@ -286,9 +498,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [512, 256, 64, 64, 32]                                   # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)                      # activation function for the hidden layers
+            
             setup["hidden_activation"] = "tanh"
-            setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -299,7 +511,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 1000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
         
         elif idx == 102:
@@ -313,9 +525,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.tanh(input)                      # activation function for the hidden layers
+            
             setup["hidden_activation"] = "tanh"
-            setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -326,7 +538,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = 128
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
         elif idx == 112:
@@ -340,9 +552,9 @@ def setup_lookup(idx):
                 # network parameters
                 setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
                 setup["output_dim"] = 10                                                        # output layer size
-                setup["hidden_activation_f"] = lambda input: F.tanh(input)                      # activation function for the hidden layers
+                
                 setup["hidden_activation"] = "tanh"
-                setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+                
                 setup["output_activation"] = "log_softmax"
 
                 # optimizer
@@ -353,7 +565,7 @@ def setup_lookup(idx):
                 # training configuration
                 setup["n_epochs"] = 10000
                 setup["batch_size"] = None
-                setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+                setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
                 setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
         
         elif idx == 103:
@@ -367,9 +579,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.relu(input)                      # activation function for the hidden layers
+            
             setup["hidden_activation"] = "relu"
-            setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -380,7 +592,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = 128
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
         elif idx == 113:
@@ -394,9 +606,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.relu(input)                      # activation function for the hidden layers
+            
             setup["hidden_activation"] = "relu"
-            setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -407,7 +619,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = None
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
         
         elif idx == 123:
@@ -421,9 +633,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.relu(input)                      # activation function for the hidden layers
+            
             setup["hidden_activation"] = "relu"
-            setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -434,7 +646,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = 128
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
         elif idx == 133:
@@ -448,9 +660,9 @@ def setup_lookup(idx):
             # network parameters
             setup["hidden_dims"] = [1024, 20, 20, 20]                                       # hidden layers sizes
             setup["output_dim"] = 10                                                        # output layer size
-            setup["hidden_activation_f"] = lambda input: F.relu(input)                      # activation function for the hidden layers
+            
             setup["hidden_activation"] = "relu"
-            setup["output_activation_f"] = lambda input: F.log_softmax( input, dim=1 )      # activation function for the output layer
+            
             setup["output_activation"] = "log_softmax"
 
             # optimizer
@@ -461,11 +673,195 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = 1024
-            setup["loss_function"] = lambda output, target, reduction='mean': F.nll_loss(output, target, reduction=reduction)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
         else:
             raise ValueError("Invalid index.")
+    
+    ######################################## MNIST ########################################
+    elif idx >= 1000:
+
+        if idx == 1001:
+            # - MNIST
+            # - Test accuracy: 
+
+            setup["comments"] = "[tanh][full batch]"
+            
+            # dataset parameters
+            setup["dataset"] = "mnist"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [256, 16, 16, 16]                                  
+            setup["output_dim"] = 10                                                        
+            
+            setup["hidden_activation"] = "tanh"
+            
+            setup["output_activation"] = "log_softmax"
+
+            # optimizer
+            setup["lr"] = 0.01  
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 1000
+            setup["batch_size"] = None
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
+
+        if idx == 1011:
+            # - MNIST
+            # - Test accuracy: 
+
+            setup["comments"] = "[tanh][mini batch]"
+            
+            # dataset parameters
+            setup["dataset"] = "mnist"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [256, 16, 16, 16]                                  
+            setup["output_dim"] = 10                                                        
+            
+            setup["hidden_activation"] = "tanh"
+            
+            setup["output_activation"] = "log_softmax"
+
+            # optimizer
+            setup["lr"] = 0.01  
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 1000
+            setup["batch_size"] = 1024
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
+
+        if idx == 1111:
+            # - MNIST
+            # - Test accuracy: 
+
+            setup["comments"] = "[tanh][mini batch][epoch is iteration]"
+            
+            # dataset parameters
+            setup["dataset"] = "mnist"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [256, 16, 16, 16]                                  
+            setup["output_dim"] = 10                                                        
+            
+            setup["hidden_activation"] = "tanh"
+            
+            setup["output_activation"] = "log_softmax"
+
+            # optimizer
+            setup["lr"] = 0.01  
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 1000
+            setup["batch_size"] = 1024
+            setup["epoch_is_iteration"] = True  # one epoch equals one pass through the training set (False) or one epoch equals one iteration/mini-batch (True)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
+
+
+        if idx == 1002:
+            # - MNIST
+            # - Test accuracy: 
+
+            setup["comments"] = "[relu][full batch]"
+            
+            # dataset parameters
+            setup["dataset"] = "mnist"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [256, 16, 16, 16]                                  
+            setup["output_dim"] = 10                                                        
+            
+            setup["hidden_activation"] = "relu"
+            
+            setup["output_activation"] = "log_softmax"
+
+            # optimizer
+            setup["lr"] = 0.01  
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 1000
+            setup["batch_size"] = None
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
+
+        if idx == 1012:
+            # - MNIST
+            # - Test accuracy: 
+
+            setup["comments"] = "[relu][mini batch]"
+            
+            # dataset parameters
+            setup["dataset"] = "mnist"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [256, 16, 16, 16]                                  
+            setup["output_dim"] = 10                                                        
+            
+            setup["hidden_activation"] = "relu"
+            
+            setup["output_activation"] = "log_softmax"
+
+            # optimizer
+            setup["lr"] = 0.01  
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 1000
+            setup["batch_size"] = 1024
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
+
+        if idx == 1112:
+            # - MNIST
+            # - Test accuracy: 
+
+            setup["comments"] = "[tanh][mini batch][epoch is iteration]"
+            
+            # dataset parameters
+            setup["dataset"] = "mnist"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [256, 16, 16, 16]                                  
+            setup["output_dim"] = 10                                                        
+            
+            setup["hidden_activation"] = "relu"
+            
+            setup["output_activation"] = "log_softmax"
+
+            # optimizer
+            setup["lr"] = 0.01  
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 1000
+            setup["batch_size"] = 1024
+            setup["epoch_is_iteration"] = True  # one epoch equals one pass through the training set (False) or one epoch equals one iteration/mini-batch (True)
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
+
+
+    else:
+        raise ValueError("Invalid index.")
     
     return setup
 

@@ -1,4 +1,4 @@
-# python3 MI.py setup-<setup_idx>/activations-<timestamp>/ <bin_size>
+# python3 MI.py -h
 
 import sys
 import os
@@ -14,20 +14,24 @@ from mi import compute_mi, plot_info_plan
 from nn import Network, train, test, save_activations
 from setups import setup_lookup
 from utils import save_setup, load_setup
-
-
-BINNING_ESTIMATOR = False   # whether to use binning estimator (True) or KDE (False)
-INTERVAL = 1                # interval for computing MI
+from argparser import get_mi_parser
 
 if __name__ == "__main__":
 
-    path = sys.argv[1]
-    assert os.path.exists(path), "Folder does not exist: {}".format(path)
+    args = get_mi_parser()
+    print("Arguments:", args.__dict__)
 
-    if len(sys.argv) > 2:
-        bin_size = float( sys.argv[2] )
-    else:
-        bin_size = None
+    setup_idx = args.setup_idx
+
+    dir = "setup-{}".format(setup_idx)
+    subdir = "activations-{}".format(args.subdir)
+    path = "./"+dir+"/"+subdir+"/"
+    assert os.path.exists(path), "Folder does not exist: {}".format(path)
+    print('Path:', path)
+
+    setup = load_setup(path)
+
+    BINNING_ESTIMATOR = (args.estimator == 'binning')
 
     # Choose torch device
     if torch.backends.mps.is_available():
@@ -38,27 +42,24 @@ if __name__ == "__main__":
         device = torch.device("cpu")     
     print("Using device:", device)
 
-    # Extract the setup index from the path and load setup
-    setup_idx = int( path.split("/")[0].split("-")[-1] )
-    setup = setup_lookup(setup_idx)
-
     # Load dataset
     ratio = setup["train_ratio"]  # ratio of the training set to the test set
     if setup["dataset"] == "mnist":
-        dataset = buildDatasets( *loadMNISTData(root="data"), ratio=ratio, name="mnist" )
+        dataset = buildDatasets( *loadMNISTData(root="data"), ratio=ratio, name="mnist", shuffle=setup["shuffle"], seed=setup["seed"] )
     elif setup["dataset"] == "synthetic":
-        dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic" )
+        dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic", shuffle=setup["shuffle"], seed=setup["seed"] )
 
-    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"] if setup["dataset"] == "synthetic" else dataset["test"], 
+    mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset[args.data], 
                                                     setup,
                                                     path, 
-                                                    interval=INTERVAL, 
-                                                    bin_size=bin_size,
+                                                    bin_size=args.bin_size,
+                                                    noise_variance=args.noise_variance,
                                                     device=device,
-                                                    binning_estimator=BINNING_ESTIMATOR)
+                                                    binning_estimator=BINNING_ESTIMATOR,
+                                                    temporize=args.temporize)
     
-    np.savez_compressed( path+"mi-{}".format(bin_size if BINNING_ESTIMATOR else "kde"), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
+    np.savez_compressed( path+"mi-{}".format(args.bin_size if BINNING_ESTIMATOR else "kde-{}".format(args.noise_variance)), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs)
 
     plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
-    plt.savefig(path+"info-plan-{}.png".format(bin_size if BINNING_ESTIMATOR else "kde"), dpi=300, bbox_inches="tight")
+    plt.savefig(path+"info-plan-{}.png".format(args.bin_size if BINNING_ESTIMATOR else "kde-{}".format(args.noise_variance)), dpi=300, bbox_inches="tight")
     plt.show()

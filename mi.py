@@ -76,7 +76,7 @@ def kde_condentropy(output, var):
     dims = output.size()[1]
     return (dims/2.0)*(np.log(2*np.pi*var) + 1)
 
-def mi_kde_xt_ty(x, y, t, p_y):
+def mi_kde_xt_ty(x, y, t, p_y, noise_variance=1e-3):
     """
     Compute mutual information (MI), using the KDE estimator, between neural network inputs and layer activations, I(X,T), and between layer activations and targets, I(T, Y).
 
@@ -90,7 +90,7 @@ def mi_kde_xt_ty(x, y, t, p_y):
 
     # Compute marginal entropies
     # noise_variance = 1e-3 # synthetic
-    noise_variance = 1e-1   # mnist
+    # noise_variance = 1e-1   # mnist
     h_upper = entropy_estimator_kl(t, noise_variance)
     if DO_LOWER:
         h_lower = entropy_estimator_bd(t, noise_variance)
@@ -172,7 +172,7 @@ def mi_xt_ty(x, y, t, p_y, activation="tanh", bin_size=0.05):
 
     return mi_xt, mi_ty
 
-def compute_mi(dataset, setup, path, interval=100, bin_size=None, device=torch.device("cpu"), binning_estimator=False):
+def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning_estimator=False, temporize=False, device=torch.device("cpu")):
     """
     If the given path stores activations, load all activation data from folder and compute the mutual information.
     If the given path stores weights, load all weights data, compute activations and compute the mutual information.
@@ -190,10 +190,10 @@ def compute_mi(dataset, setup, path, interval=100, bin_size=None, device=torch.d
         dataset : dataset, dataset to use to compute the MI
         setup : dictionary, setup dictionary containing at least the model configuration
         path : path to the folder containing the activation data
-        interval : interval between epochs to compute the mutual information
         bin_size : size of the bins used to discretize activations, relevant when using binnning estimator
         device : torch.device, device to use for the computation, relevant when the weights (and not the activations) were stored or when using KDE estimator
         binning_estimator : bool, whether to use binning estimator (True) or KDE (False) to compute the MI
+        temporize : bool, whether to temporize the computation of the MI (i.e., compute the MI only for a subset of the epochs)
     
     Returns:
         mi_xt_epochs : list of lists, mutual information between input and layer activations for each epoch (axis 0) and each layer (axis 1)
@@ -224,8 +224,8 @@ def compute_mi(dataset, setup, path, interval=100, bin_size=None, device=torch.d
             input_dim=dataset.data.shape[1], 
             hidden_dims=setup["hidden_dims"],
             output_dim=setup["output_dim"],
-            hidden_activation_f=setup["hidden_activation_f"],
-            output_activation_f=setup["output_activation_f"]
+            hidden_activation=setup["hidden_activation"],
+            output_activation=setup["output_activation"]
             ).to(device)
     
     # empirical probability distributions of the targets
@@ -241,8 +241,19 @@ def compute_mi(dataset, setup, path, interval=100, bin_size=None, device=torch.d
         print("{}/{}".format(counter, len(file_name)), end='\r')
         
         epoch = int(file.split('_')[-1].split('.')[0])
-        if epoch % interval != 0:
-            continue
+
+        if temporize:
+            if epoch < 20:       # Save for all first 20 epochs
+                pass
+            elif epoch < 100:    # Then for every 5th epoch
+                if not epoch % 5 == 0:
+                    continue
+            elif epoch < 200:    # Then every 10th
+                if not epoch % 10 == 0:
+                    continue
+            else:                # Then every 100th
+                if not epoch % 100 == 0:
+                    continue
 
         if ACTIVATIONS:
             activations = np.load(path+file)                                    # load activations (numpy array)
@@ -264,7 +275,7 @@ def compute_mi(dataset, setup, path, interval=100, bin_size=None, device=torch.d
                     activation_type = setup["hidden_activation"]
                 mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, act if ACTIVATIONS else act.cpu().numpy(), p_y, activation=activation_type, bin_size=bin_size)
             else:
-                mi_xt, mi_ty = mi_kde_xt_ty(dataset.data, dataset.targets, act if not ACTIVATIONS else torch.from_numpy(act).to(device), p_y)[:2]
+                mi_xt, mi_ty = mi_kde_xt_ty(dataset.data, dataset.targets, act if not ACTIVATIONS else torch.from_numpy(act).to(device), p_y, noise_variance=noise_variance)[:2]
                 mi_xt = mi_xt.cpu().numpy()
                 mi_ty = mi_ty.cpu().numpy()
             mi_xt_layers.append( mi_xt )
@@ -312,7 +323,7 @@ def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None, max_epoch=None):
     color = cmap(epochs)
 
     for e in range(n_saved_epochs):
-        plt.plot(mi_xt[e, :], mi_yt[e, :], c=color[e], linewidth=0.5, alpha=0.2)
+        plt.plot(mi_xt[e, :], mi_yt[e, :], c=color[e], linewidth=0.5, alpha=0.1)
 
     cb = plt.colorbar(scatter, ticks=[epochs[0], epochs[-1]])
     cb.ax.set_title('Epochs', fontsize=10)

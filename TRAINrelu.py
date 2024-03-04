@@ -111,35 +111,29 @@ if __name__ == "__main__":
     else:
         save_weights(model, epoch, path=path)
     
-    epoch_is_iteration = setup["epoch_is_iteration"] if "epoch_is_iteration" in setup else False
 
     # for epoch in range(1, setup["n_epochs"] + 1):
-    ### BEGIN !!!
-    epoch = 0 
-    count = 0 
-    learning = False 
-    learning_count = 1 
-    while True:   
-        epoch += 1  
-        if not learning: 
-            count += 1 
-        else: 
-            learning_count += 1 
+    epoch = 0 ## !!!
+    count = 0 ## !!!
+    learning = False ## !!!
+    learning_count = 1 ## !!!
+    while True: ## !!!  
+        epoch += 1 ## !!! 
+        if not learning: ## !!!
+            count += 1 ## !!!
+        else: ## !!!
+            learning_count += 1 ## !!!
 
-        if count > 10000 or learning_count > 10000: 
-            break 
-    ### END !!!
+        if count > 10000 or learning_count > 10000: ## !!!
+            break ## !!!
 
-        train_loss_item = train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose, epoch_is_iteration=epoch_is_iteration)
+        train_loss_item = train(model, setup, loader["train"], optimizer, device, epoch, verbose=verbose)
         test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
 
-        ### BEGIN !!!
-        if args.warmup and train_loss_item < 0.69: 
-            if not learning: 
-                print( "== {} started learning ({}) ==".format(args.subdir, count) ) 
-            learning = True 
-        ### END !!!
-
+        if train_loss_item < 0.69: ## !!!
+            if not learning:
+                print( "== {} started learning ({}) ==".format(args.subdir, count) )
+            learning = True ## !!!
 
         train_loss.append(train_loss_item)
         test_loss.append(test_loss_item)
@@ -185,9 +179,6 @@ if __name__ == "__main__":
     plt.legend()
     plt.savefig(path+"acc.png", dpi=300, bbox_inches="tight")
     plt.show()
-
-    print('Setup:', setup)
-    print('Path:', path)
 
     # mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 
     #                                                 setup, 
