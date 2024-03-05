@@ -16,12 +16,15 @@ def temporizer(epoch):
 
     if epoch < 100:         # Save for all first 100 epochs
         return False
-    elif epoch < 1000:      # Then every 10 epochs
+    else:
         if not epoch % 10 == 0:
-            return False
-    else:                   # Then every 100 epochs
-        if not epoch % 100 == 0:
             return True
+    # elif epoch < 1000:      # Then every 10 epochs
+    #     if not epoch % 10 == 0:
+    #         return True
+    # else:                   # Then every 100 epochs
+    #     if not epoch % 100 == 0:
+    #         return True
 
 def save_setup(setup, path, fname=None):
     """

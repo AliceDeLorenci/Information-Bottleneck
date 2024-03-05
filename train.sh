@@ -6,7 +6,7 @@
 # <start_idx> : index of the first repetition
 # <n_repetitions> : number of repetitions
 
-SETUP=$((1002))
+SETUP=$((1001))
 
 START=$1
 END=$(( $1 + $2 ))
@@ -14,12 +14,12 @@ END=$(( $1 + $2 ))
 for ((i=$START; i<$END; i++))
 do  
     # python3 TRAIN.py --shuffle --verbose=0 --subdir=$i --setup_idx=$SETUP --warmup & # sythetic
-    python3 TRAIN.py --shuffle --verbose=0 --subdir=$i --setup_idx=$SETUP --temporize & # mnist
+    python3 TRAIN.py --shuffle --verbose=0 --subdir=$i --setup_idx=$SETUP & # mnist
 done
 wait
 for ((i=$START; i<$END; i++))
 do  
     # python3 MI.py --subdir=$i --setup_idx=14 & # synthetic
-    python3 MI.py --subdir=$i --setup_idx=$SETUP --data=test --noise_variance=0.1 --temporize & # mnist
+    python3 MI.py --subdir=$i --setup_idx=$SETUP --data=test --noise_variance=0.1 & # mnist
 done
 wait

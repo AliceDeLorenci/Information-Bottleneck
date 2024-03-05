@@ -740,7 +740,7 @@ def setup_lookup(idx):
             setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
-        if idx == 1111:
+        if idx == 1021:
             # - MNIST
             # - Test accuracy: 
 
@@ -759,7 +759,7 @@ def setup_lookup(idx):
             setup["output_activation"] = "log_softmax"
 
             # optimizer
-            setup["lr"] = 0.01  
+            setup["lr"] = 0.001  
             setup["momentum"] = 0.9
             setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
 
@@ -829,7 +829,7 @@ def setup_lookup(idx):
             setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
-        if idx == 1112:
+        if idx == 1022:
             # - MNIST
             # - Test accuracy: 
 
@@ -848,7 +848,7 @@ def setup_lookup(idx):
             setup["output_activation"] = "log_softmax"
 
             # optimizer
-            setup["lr"] = 0.01  
+            setup["lr"] = 0.001  
             setup["momentum"] = 0.9
             setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
 

@@ -217,7 +217,6 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
     else:
         ACTIVATIONS = False
         file_name = weights_file_name
-    print("Data type:", type)
     
     # if the folder contains layer weights, load the model
     if not ACTIVATIONS:
