@@ -41,9 +41,6 @@ def get_distribution(x): # compute array's row distribution
 
 ###
 def get_dists(X):
-    """Keras code to compute the pairwise distance matrix for a set of
-    vectors specifie by the matrix X.
-    """
     x2 = torch.unsqueeze(torch.sum(torch.square(X), dim=1), dim=1)
     dists = x2 + torch.transpose(x2, 0, 1) - 2*torch.matmul(X, torch.transpose(X, 0, 1))
     return dists
@@ -233,6 +230,8 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
 
     mi_xt_epochs = []
     mi_ty_epochs = []
+    mi_xt_lb_epochs = []
+    mi_ty_lb_epochs = []
     epochs = []
     
     counter = 0
@@ -258,6 +257,8 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
 
         mi_xt_layers = []
         mi_ty_layers = []
+        mi_xt_lb_layers = []
+        mi_ty_lb_layers = []
 
         # activations for hidden layers
         N_LAYERS = len(activations)
@@ -268,18 +269,26 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
                 else:
                     activation_type = setup["hidden_activation"]
                 mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, act if ACTIVATIONS else act.cpu().numpy(), p_y, activation=activation_type, bin_size=bin_size)
+                mi_xt_lb = mi_ty_lb = None
             else:
-                mi_xt, mi_ty = mi_kde_xt_ty(dataset.data, dataset.targets, act if not ACTIVATIONS else torch.from_numpy(act).to(device), p_y, noise_variance=noise_variance)[:2]
+                mi_xt, mi_ty, _, mi_xt_lb, mi_ty_lb, _ = mi_kde_xt_ty(dataset.data, dataset.targets, act if not ACTIVATIONS else torch.from_numpy(act).to(device), p_y, noise_variance=noise_variance)
                 mi_xt = mi_xt.cpu().numpy()
                 mi_ty = mi_ty.cpu().numpy()
+                mi_xt_lb = mi_xt_lb.cpu().numpy()
+                mi_ty_lb = mi_ty_lb.cpu().numpy()
+
             mi_xt_layers.append( mi_xt )
             mi_ty_layers.append( mi_ty )
+            mi_xt_lb_layers.append( mi_xt_lb )
+            mi_ty_lb_layers.append( mi_ty_lb )
 
         mi_xt_epochs.append( mi_xt_layers )
         mi_ty_epochs.append( mi_ty_layers )
+        mi_xt_lb_epochs.append( mi_xt_lb_layers )
+        mi_ty_lb_epochs.append( mi_ty_lb_layers )
         epochs.append( epoch )
     
-    return mi_xt_epochs, mi_ty_epochs, epochs
+    return mi_xt_epochs, mi_ty_epochs, mi_xt_lb_epochs, mi_ty_lb_epochs, epochs
 
 def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None, max_epoch=None):
     """
