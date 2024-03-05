@@ -230,8 +230,8 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
 
     mi_xt_epochs = []
     mi_ty_epochs = []
-    mi_xt_lb_epochs = []
-    mi_ty_lb_epochs = []
+    # mi_xt_lb_epochs = []
+    # mi_ty_lb_epochs = []
     epochs = []
     
     counter = 0
@@ -274,21 +274,21 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
                 mi_xt, mi_ty, _, mi_xt_lb, mi_ty_lb, _ = mi_kde_xt_ty(dataset.data, dataset.targets, act if not ACTIVATIONS else torch.from_numpy(act).to(device), p_y, noise_variance=noise_variance)
                 mi_xt = mi_xt.cpu().numpy()
                 mi_ty = mi_ty.cpu().numpy()
-                mi_xt_lb = mi_xt_lb.cpu().numpy()
-                mi_ty_lb = mi_ty_lb.cpu().numpy()
+                # mi_xt_lb = mi_xt_lb.cpu().numpy()
+                # mi_ty_lb = mi_ty_lb.cpu().numpy()
 
             mi_xt_layers.append( mi_xt )
             mi_ty_layers.append( mi_ty )
-            mi_xt_lb_layers.append( mi_xt_lb )
-            mi_ty_lb_layers.append( mi_ty_lb )
+            # mi_xt_lb_layers.append( mi_xt_lb )
+            # mi_ty_lb_layers.append( mi_ty_lb )
 
         mi_xt_epochs.append( mi_xt_layers )
         mi_ty_epochs.append( mi_ty_layers )
-        mi_xt_lb_epochs.append( mi_xt_lb_layers )
-        mi_ty_lb_epochs.append( mi_ty_lb_layers )
+        # mi_xt_lb_epochs.append( mi_xt_lb_layers )
+        # mi_ty_lb_epochs.append( mi_ty_lb_layers )
         epochs.append( epoch )
     
-    return mi_xt_epochs, mi_ty_epochs, mi_xt_lb_epochs, mi_ty_lb_epochs, epochs
+    return mi_xt_epochs, mi_ty_epochs, None, None, epochs
 
 def plot_info_plan(mi_xt, mi_yt, epochs, ticks=[], markup=None, max_epoch=None):
     """

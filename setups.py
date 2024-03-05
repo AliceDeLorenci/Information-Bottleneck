@@ -68,6 +68,139 @@ def setup_lookup(idx):
             setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
 
+        elif idx == 31:
+            setup["comments"] = "[ibdnn][tanh]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [10, 7, 5, 4, 3]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.0004                            
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 41:
+            setup["comments"] = "[ibdnn][tanh]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "tanh"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.0004                            
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 42:
+            setup["comments"] = "[ibdnn][relu]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "relu"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.0004                            
+            setup["momentum"] = 0.9
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 43:
+            setup["comments"] = "[ibdnn][relu]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "relu"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.0004                            
+            setup["momentum"] = 0.9
+            setup["weight_decay"] = 1e-4
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"], weight_decay=setup["weight_decay"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+        elif idx == 44:
+            setup["comments"] = "[ibdnn][relu]"
+            
+            # dataset parameters
+            setup["dataset"] = "synthetic"
+            setup["train_ratio"] = 0.85
+
+            # network parameters
+            setup["hidden_dims"] = [12, 10, 7, 5, 4, 3]                         
+            setup["output_dim"] = 1                                         
+            
+            setup["hidden_activation"] = "relu"      
+            
+            setup["output_activation"] = "sigmoid"
+
+            # optimizer
+            setup["lr"] = 0.0004                            
+            setup["momentum"] = 0.9
+            setup["weight_decay"] = 1e-3
+            setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"], weight_decay=setup["weight_decay"] )
+
+            # training configuration
+            setup["n_epochs"] = 10000
+            setup["batch_size"] = 256
+            setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.binary_cross_entropy(output.reshape(-1), target.float(), reduction=reduction)
+            setup["evaluate_correct"] = lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )
+
+
         elif idx == 12:
             setup["comments"] = "original paper setup but with relu activation function"
             

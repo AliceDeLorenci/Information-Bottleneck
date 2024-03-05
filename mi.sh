@@ -6,7 +6,7 @@
 # <start_idx> : index of the first repetition
 # <n_repetitions> : number of repetitions
 
-SETUP=$((1022))
+SETUP=$((1011))
 
 START=$1
 END=$(( $1 + $2 ))
@@ -14,6 +14,6 @@ END=$(( $1 + $2 ))
 for ((i=$START; i<$END; i++))
 do  
     # python3 MI.py --subdir=$i --setup_idx=$SETUP & # synthetic
-    python3 MI.py --subdir=$i --setup_idx=$SETUP --data=test --noise_variance=0.01 & # mnist
+    python3 MI.py --subdir=$i --setup_idx=$SETUP --data=test --noise_variance=0.1 & # mnist
 done
 wait

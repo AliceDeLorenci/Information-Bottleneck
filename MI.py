@@ -49,16 +49,16 @@ if __name__ == "__main__":
     elif setup["dataset"] == "synthetic":
         dataset = buildDatasets( *loadSyntheticData(file="data/synthetic/var_u.mat"), ratio=ratio, name="synthetic", shuffle=setup["shuffle"], seed=setup["seed"] )
 
-    mi_xt_epochs, mi_ty_epochs, mi_xt_lb_epochs, mi_ty_lb_epochs, epochs = compute_mi(dataset[args.data], 
-                                                                        setup,
-                                                                        path, 
-                                                                        bin_size=args.bin_size,
-                                                                        noise_variance=args.noise_variance,
-                                                                        device=device,
-                                                                        binning_estimator=BINNING_ESTIMATOR,
-                                                                        temporize=args.temporize)
+    mi_xt_epochs, mi_ty_epochs, _, _, epochs = compute_mi(dataset[args.data], 
+                                                            setup,
+                                                            path, 
+                                                            bin_size=args.bin_size,
+                                                            noise_variance=args.noise_variance,
+                                                            device=device,
+                                                            binning_estimator=BINNING_ESTIMATOR,
+                                                            temporize=args.temporize)
     
-    np.savez_compressed( path+"mi-{}".format(args.bin_size if BINNING_ESTIMATOR else "kde-{}".format(args.noise_variance)), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs, epochs=epochs, mi_xt_lb_epochs=mi_xt_lb_epochs, mi_ty_lb_epochs=mi_ty_lb_epochs)
+    np.savez_compressed( path+"mi-{}".format(args.bin_size if BINNING_ESTIMATOR else "kde-{}".format(args.noise_variance)), mi_xt_epochs=mi_xt_epochs, mi_ty_epochs=mi_ty_epochs) # , epochs=epochs, mi_xt_lb_epochs=mi_xt_lb_epochs, mi_ty_lb_epochs=mi_ty_lb_epochs)
 
     plot_info_plan(mi_xt_epochs, mi_ty_epochs, epochs)
     plt.savefig(path+"info-plan-{}.png".format(args.bin_size if BINNING_ESTIMATOR else "kde-{}".format(args.noise_variance)), dpi=300, bbox_inches="tight")

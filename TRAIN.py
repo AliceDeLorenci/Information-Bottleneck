@@ -134,7 +134,7 @@ if __name__ == "__main__":
         test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
 
         ### BEGIN !!!
-        if args.warmup and train_loss_item < args.threshold: 
+        if args.warmup and test_loss_item < args.threshold: ## !!!
             if not learning: 
                 print( "== {} started learning ({}) ==".format(args.subdir, count) ) 
             learning = True 
