@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import torch
 
 from dataset import buildDatasets, buildDataLoader, loadMNISTData, loadSyntheticData
-from mi import compute_mi, plot_info_plan, mi_kde_xt_ty, mi_xt_ty, get_label_distribution
+from miestimation import compute_mi, plot_info_plan, mi_kde_xt_ty, mi_xt_ty, get_label_distribution
 from nn import Network, train, test, save_activations, save_weights, return_activations
 from setups import setup_lookup
 from utils import save_setup, load_setup, temporizer
@@ -144,7 +144,7 @@ if __name__ == "__main__":
         test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
 
         ### BEGIN !!!
-        if args.warmup and train_loss_item < args.threshold: 
+        if args.warmup and test_loss_item <= args.threshold: 
             if not learning: 
                 print( "== {} started learning ({}) ==".format(args.subdir, count) ) 
             learning = True 
@@ -231,7 +231,7 @@ if __name__ == "__main__":
     plt.savefig(path+"acc.png", dpi=300, bbox_inches="tight")
     plt.show()
 
-    print('Setup:', setup)
+    print('Setup:', setup_idx)
     print('Path:', path)
 
     # mi_xt_epochs, mi_ty_epochs, epochs = compute_mi(dataset["full"], 

@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import torch
 
 from dataset import buildDatasets, buildDataLoader, loadMNISTData, loadSyntheticData
-from mi import compute_mi, plot_info_plan
+from miestimation import compute_mi, plot_info_plan
 from nn import Network, train, test, save_activations, save_weights
 from setups import setup_lookup
 from utils import save_setup, load_setup

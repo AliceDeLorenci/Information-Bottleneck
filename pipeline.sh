@@ -13,6 +13,6 @@ END=$(( $1 + $2 ))
 
 for ((i=$START; i<$END; i++))
 do  
-    python3 PIPELINE.py --shuffle --verbose=0 --subdir=$i --setup_idx=$SETUP --warmup & 
+    python3 PIPELINE.py --shuffle --verbose=0 --subdir=$i --setup_idx=$SETUP --warmup --threshold=0.65& 
 done
 wait

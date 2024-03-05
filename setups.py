@@ -157,7 +157,7 @@ def setup_lookup(idx):
             setup["hidden_dims"] = [12, 10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
             
-            setup["hidden_activation"] = "relu"      
+            setup["hidden_activation"] = "tanh"      
             
             setup["output_activation"] = "sigmoid"
 
@@ -184,7 +184,7 @@ def setup_lookup(idx):
             setup["hidden_dims"] = [12, 10, 7, 5, 4, 3]                         
             setup["output_dim"] = 1                                         
             
-            setup["hidden_activation"] = "relu"      
+            setup["hidden_activation"] = "tanh"      
             
             setup["output_activation"] = "sigmoid"
 

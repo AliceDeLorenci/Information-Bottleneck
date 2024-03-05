@@ -11,7 +11,7 @@
 3
 ],
 "output_dim": 1,
-"hidden_activation": "relu",
+"hidden_activation": "tanh",
 "output_activation": "sigmoid",
 "lr": 0.0004,
 "momentum": 0.9,
@@ -29,8 +29,8 @@
 "noise_variance": 0.001,
 "shuffle": true,
 "warmup": true,
-"threshold": 0.69,
-"seed": 791,
+"threshold": 0.65,
+"seed": 52,
 "verbose": 0,
 "temporize": false
 }
