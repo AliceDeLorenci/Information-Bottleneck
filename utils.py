@@ -1,14 +1,27 @@
-"""
-Utility functions for saving and loading data.
-
-save_setup: save the setup to a json file.
-
-load_setup: load the setup from a json file and convert lambda source code to lambda function.
-"""
 import json
 import inspect
 import datetime
 import os
+
+def temporizer(epoch):
+    """
+    Determines whether to SKIP saving the activations/weights (or computing MI) for the current epoch.
+
+    Args:
+        epoch: int, current epoch number.
+
+    Returns:
+        bool, whether to skip the current epoch.
+    """
+
+    if epoch < 100:         # Save for all first 100 epochs
+        return False
+    elif epoch < 1000:      # Then every 10 epochs
+        if not epoch % 10 == 0:
+            return False
+    else:                   # Then every 100 epochs
+        if not epoch % 100 == 0:
+            return True
 
 def save_setup(setup, path, fname=None):
     """

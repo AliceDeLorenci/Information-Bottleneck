@@ -20,6 +20,7 @@ def get_train_parser():
 
     parser.add_argument('--shuffle', action='store_true', help='Whether to shuffle the data before splitting')
     parser.add_argument('--warmup', action='store_true', help='Whether to wait for network to start learning to start counting epochs')
+    parser.add_argument('--threshold', type=float, default=0.69, help='Threshold for the warmup')
     parser.add_argument('--seed', type=int, default=None, help='Seed for all random number generators')
     parser.add_argument('--setup_idx', type=int, default=0, help='Index of the setup to use')
     parser.add_argument('--verbose', type=int, default=1, help='Verbosity level')

@@ -24,9 +24,9 @@
 "evaluate_correct": "lambda output, target: torch.sum( torch.round(output.reshape(-1)) == target, dtype=torch.float32 )\n",
 "shuffle": true,
 "warmup": true,
-"seed": 994,
+"seed": 274,
 "setup_idx": 23,
 "verbose": 0,
-"subdir": 6,
+"subdir": 12,
 "temporize": false
 }

@@ -5,6 +5,10 @@ Presentation: https://evento.renater.fr/survey/validation-du-cours-modelisation-
 - for mnist, computing MI on **test set**
 - on mi.py mi_kde_xt_ty, changed **noise variance**
 
+To specify CUDA device 1 for example, you would set the CUDA_VISIBLE_DEVICES using
+
+export CUDA_VISIBLE_DEVICES=1
+
 # Information-Bottleneck
 
 Analysis of the application of the Information Bottleneck principle to Deep Neural Networks (DNN) based on Shwartz-Ziv, R. and Tishby, N., “Opening the Black Box of Deep Neural Networks via Information”.
@@ -86,6 +90,8 @@ Modules:
 
         """
         Utility functions for saving and loading data.
+
+        temporizer: determines whether to skip saving for this epoch.
 
         save_setup: save the setup to a json file.
 

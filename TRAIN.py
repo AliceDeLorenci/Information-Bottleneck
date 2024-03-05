@@ -16,7 +16,7 @@ from dataset import buildDatasets, buildDataLoader, loadMNISTData, loadSynthetic
 from mi import compute_mi, plot_info_plan
 from nn import Network, train, test, save_activations, save_weights
 from setups import setup_lookup
-from utils import save_setup, load_setup
+from utils import save_setup, load_setup, temporizer
 from argparser import get_train_parser
 
 SAVE_ACTIVATIONS = False    # whether to save activations (True) or weights (False)
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         test_loss_item, test_acc_item = test(model, setup, loader["test"], device, verbose=verbose)
 
         ### BEGIN !!!
-        if args.warmup and train_loss_item < 0.69: 
+        if args.warmup and train_loss_item < args.threshold: 
             if not learning: 
                 print( "== {} started learning ({}) ==".format(args.subdir, count) ) 
             learning = True 
@@ -146,17 +146,11 @@ if __name__ == "__main__":
         test_acc.append(test_acc_item)
 
         if temporize:
-            if epoch < 20:       # Save for all first 20 epochs
+            temporize_flag = temporizer(epoch)
+            if temporize_flag:
+                continue
+            else:
                 pass
-            elif epoch < 100:    # Then for every 5th epoch
-                if not epoch % 5 == 0:
-                    continue
-            elif epoch < 200:    # Then every 10th
-                if not epoch % 10 == 0:
-                    continue
-            else:                # Then every 100th
-                if not epoch % 100 == 0:
-                    continue
         
         if SAVE_ACTIVATIONS:
             save_activations(model, dataset["full"], epoch, device, path=path)

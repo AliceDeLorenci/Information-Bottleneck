@@ -701,7 +701,7 @@ def setup_lookup(idx):
             setup["output_activation"] = "log_softmax"
 
             # optimizer
-            setup["lr"] = 0.01  
+            setup["lr"] = 0.001  
             setup["momentum"] = 0.9
             setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
 
@@ -790,7 +790,7 @@ def setup_lookup(idx):
             setup["output_activation"] = "log_softmax"
 
             # optimizer
-            setup["lr"] = 0.01  
+            setup["lr"] = 0.001  
             setup["momentum"] = 0.9
             setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
 

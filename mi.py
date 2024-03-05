@@ -8,6 +8,7 @@ import matplotlib.ticker as ticker
 import os
 
 from nn import Network, load_weights, return_activations
+from utils import temporizer
 
 def get_label_distribution(target):
     """
@@ -243,17 +244,11 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
         epoch = int(file.split('_')[-1].split('.')[0])
 
         if temporize:
-            if epoch < 20:       # Save for all first 20 epochs
+            temporize_flag = temporizer(epoch)
+            if temporize_flag:
+                continue
+            else:
                 pass
-            elif epoch < 100:    # Then for every 5th epoch
-                if not epoch % 5 == 0:
-                    continue
-            elif epoch < 200:    # Then every 10th
-                if not epoch % 10 == 0:
-                    continue
-            else:                # Then every 100th
-                if not epoch % 100 == 0:
-                    continue
 
         if ACTIVATIONS:
             activations = np.load(path+file)                                    # load activations (numpy array)
