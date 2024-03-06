@@ -136,7 +136,7 @@ if __name__ == "__main__":
         else: 
             learning_count += 1 
 
-        if count > 10000 or learning_count > 10000: 
+        if count > setup["n_epochs"] or learning_count > setup["n_epochs"]: 
             break 
     ### END !!!
 

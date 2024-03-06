@@ -14,7 +14,7 @@ def temporizer(epoch):
         bool, whether to skip the current epoch.
     """
 
-    if epoch < 100:         # Save for all first 100 epochs
+    if epoch < 1000:         # Save for all first 100 epochs # !!!
         return False
     else:
         if not epoch % 10 == 0:

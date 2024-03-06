@@ -927,8 +927,9 @@ def setup_lookup(idx):
             setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
 
             # training configuration
-            setup["n_epochs"] = 10000
+            setup["n_epochs"] = 100000 # !!!
             setup["batch_size"] = 128
+            setup["epoch_is_iteration"] = True  # !!!
             setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
@@ -988,6 +989,7 @@ def setup_lookup(idx):
             # training configuration
             setup["n_epochs"] = 10000
             setup["batch_size"] = 128
+            setup["epoch_is_iteration"] = True  # one epoch equals one pass through the training set (False) or one epoch equals one iteration/mini-batch (True)
             setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
@@ -1045,8 +1047,9 @@ def setup_lookup(idx):
             setup["optimizer"] = lambda parameters: torch.optim.SGD( parameters, lr=setup["lr"], momentum=setup["momentum"] )
 
             # training configuration
-            setup["n_epochs"] = 10000
+            setup["n_epochs"] = 100000 # !!!
             setup["batch_size"] = 128
+            setup["epoch_is_iteration"] = True  # !!!
             setup["loss_function"] = lambda output, target, reduction='mean': torch.nn.functional.nll_loss(output, target, reduction=reduction)
             setup["evaluate_correct"] = lambda output, target: torch.sum( output.argmax(dim=1) == target, dtype=torch.float32 )
 
