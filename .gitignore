@@ -1,4 +1,6 @@
 # Custom
+.DS_Store
+experiments
 compute_activations.sh
 compute_activations.py
 compute_mi.py
