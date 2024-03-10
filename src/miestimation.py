@@ -39,7 +39,6 @@ def get_distribution(x): # compute array's row distribution
     _, inverse_indices, count = np.unique(x, axis=0, return_inverse=True, return_counts=True)
     return count / np.sum(count), inverse_indices
 
-###
 def get_dists(X):
     x2 = torch.unsqueeze(torch.sum(torch.square(X), dim=1), dim=1)
     dists = x2 + torch.transpose(x2, 0, 1) - 2*torch.matmul(X, torch.transpose(X, 0, 1))
@@ -51,9 +50,6 @@ def get_shape(x):
     return dims, N
 
 def entropy_estimator_kl(x, var):
-    # KL-based upper bound on entropy of mixture of Gaussians with covariance matrix var * I 
-    #  see Kolchinsky and Tracey, Estimating Mixture Entropy with Pairwise Distances, Entropy, 2017. Section 4.
-    #  and Kolchinsky and Tracey, Nonlinear Information Bottleneck, 2017. Eq. 10
     dims, N = get_shape(x)
     dists = get_dists(x)
     dists2 = dists / (2*var)
@@ -61,13 +57,6 @@ def entropy_estimator_kl(x, var):
     lprobs = torch.logsumexp(-dists2, axis=1) - np.log(N) - normconst
     h = -torch.mean(lprobs)
     return dims/2 + h
-
-def entropy_estimator_bd(x, var):
-    # Bhattacharyya-based lower bound on entropy of mixture of Gaussians with covariance matrix var * I 
-    #  see Kolchinsky and Tracey, Estimating Mixture Entropy with Pairwise Distances, Entropy, 2017. Section 4.
-    dims, N = get_shape(x)
-    val = entropy_estimator_kl(x,4*var)
-    return val + torch.log(0.25)*dims/2
 
 def kde_condentropy(output, var):
     # Return entropy of a multivariate Gaussian, in nats
@@ -84,14 +73,11 @@ def mi_kde_xt_ty(x, y, t, p_y, noise_variance=1e-3):
         t : activations
         p_y : distribution of the targets
     """
-    DO_LOWER = False
 
     # Compute marginal entropies
     # noise_variance = 1e-3 # synthetic
     # noise_variance = 1e-1   # mnist
     h_upper = entropy_estimator_kl(t, noise_variance)
-    if DO_LOWER:
-        h_lower = entropy_estimator_bd(t, noise_variance)
         
     # Layer activity given input. This is simply the entropy of the Gaussian noise
     hM_given_X = kde_condentropy(t, noise_variance)
@@ -104,26 +90,14 @@ def mi_kde_xt_ty(x, y, t, p_y, noise_variance=1e-3):
         hcond_upper = entropy_estimator_kl(t[idx,:], noise_variance) 
         hM_given_Y_upper += p_y[i] * hcond_upper
 
-    if DO_LOWER:
-        hM_given_Y_lower=0.
-        for i in range(NUM_LABELS):
-            hcond_lower = entropy_estimator_bd(t[idx,:], noise_variance)
-            hM_given_Y_lower += p_y[i] * hcond_lower
 
     nats2bits = 1.0/np.log(2)
     mi_xt = nats2bits * (h_upper - hM_given_X)
     mi_ty = nats2bits * (h_upper - hM_given_Y_upper)
     h_t_upper = nats2bits * h_upper
 
-    mi_xt_lower = mi_ty_lower = h_t_lower = None
-    if DO_LOWER:
-        mi_xt_lower = nats2bits * (h_lower - hM_given_X)
-        mi_ty_lower = nats2bits * (h_lower - hM_given_Y_lower)
-        h_t_lower = nats2bits * h_lower
+    return mi_xt, mi_ty
 
-    return mi_xt, mi_ty, h_t_upper, mi_xt_lower, mi_ty_lower, h_t_lower
-
-### 
 
 def mi_xt_ty(x, y, t, p_y, activation="tanh", bin_size=0.05):
     """
@@ -230,8 +204,6 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
 
     mi_xt_epochs = []
     mi_ty_epochs = []
-    # mi_xt_lb_epochs = []
-    # mi_ty_lb_epochs = []
     epochs = []
     
     counter = 0
@@ -257,8 +229,6 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
 
         mi_xt_layers = []
         mi_ty_layers = []
-        mi_xt_lb_layers = []
-        mi_ty_lb_layers = []
 
         # activations for hidden layers
         N_LAYERS = len(activations)
@@ -269,23 +239,16 @@ def compute_mi(dataset, setup, path, bin_size=None, noise_variance=1e-3, binning
                 else:
                     activation_type = setup["hidden_activation"]
                 mi_xt, mi_ty = mi_xt_ty(dataset.data, dataset.targets, act if ACTIVATIONS else act.cpu().numpy(), p_y, activation=activation_type, bin_size=bin_size)
-                mi_xt_lb = mi_ty_lb = None
             else:
-                mi_xt, mi_ty, _, mi_xt_lb, mi_ty_lb, _ = mi_kde_xt_ty(dataset.data, dataset.targets, act if not ACTIVATIONS else torch.from_numpy(act).to(device), p_y, noise_variance=noise_variance)
+                mi_xt, mi_ty = mi_kde_xt_ty(dataset.data, dataset.targets, act if not ACTIVATIONS else torch.from_numpy(act).to(device), p_y, noise_variance=noise_variance)
                 mi_xt = mi_xt.cpu().numpy()
                 mi_ty = mi_ty.cpu().numpy()
-                # mi_xt_lb = mi_xt_lb.cpu().numpy()
-                # mi_ty_lb = mi_ty_lb.cpu().numpy()
 
             mi_xt_layers.append( mi_xt )
             mi_ty_layers.append( mi_ty )
-            # mi_xt_lb_layers.append( mi_xt_lb )
-            # mi_ty_lb_layers.append( mi_ty_lb )
 
         mi_xt_epochs.append( mi_xt_layers )
         mi_ty_epochs.append( mi_ty_layers )
-        # mi_xt_lb_epochs.append( mi_xt_lb_layers )
-        # mi_ty_lb_epochs.append( mi_ty_lb_layers )
         epochs.append( epoch )
     
     return mi_xt_epochs, mi_ty_epochs, None, None, epochs

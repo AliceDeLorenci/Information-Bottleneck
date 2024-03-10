@@ -25,7 +25,7 @@ def get_mi_parser():
     parser = argparse.ArgumentParser(description="Computes the I(X, T) and I(T, Y) for all layers and epochs and saves")
 
     parser.add_argument('--setup_idx', type=int, default=0, help='Index of the setup to use')
-    parser.add_argument('--subdir', type=str, default=None, help='Tag of the subdirectory where activations/weights, subdirectory name is activations-<subdir_tag>')
+    parser.add_argument('--subdir', type=str, default=None, help='Tag of the subdirectory storing activations/weights, subdirectory name should be activations-<subdir_tag>')
 
     parser.add_argument('--data', type=str, default='full', choices=['full', 'test'], help='Dataset split to use for MI computation')
     parser.add_argument('--estimator', type=str, default='kde', choices=['kde', 'binning'], help='Estimator to use for MI computation')

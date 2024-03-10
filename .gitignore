@@ -1,22 +1,3 @@
-# Custom
-.DS_Store
-experiments
-compute_activations.sh
-compute_activations.py
-compute_mi.py
-compute_mi.sh
-setup-*/activations-*/*
-!setup-*/activations-*/*.png
-!setup-*/activations-*/mi*
-!setup-*/activations-*/loss.npz
-!setup-*/activations-*/setup.json
-data/*
-!data/synthetic
-local*
-simplebinmi.py
-
-
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
